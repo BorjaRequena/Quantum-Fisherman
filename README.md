@@ -1,5 +1,5 @@
 # Quantum Fisher(man)
-> Quantum Fisher(man) project developed for the <a href='https://quantum-journal.org/papers/q-2020-05-25-269/pdf/'>IBM Qiskit Hackathon 2021](https://qiskithackathoneurope.bemyapp.com). We provide efficient ways to obtain the quantum Fisher information from quantum circuits, which allows the optimization through advanced techniques such as the [quantum natural gradient</a>, as well as to study the loss landscape of such circuits. 
+> Quantum Fisher(man) project developed for the <a href='https://qiskithackathoneurope.bemyapp.com'>IBM Qiskit Hackathon 2021</a>. We provide efficient ways to obtain the quantum Fisher information from quantum circuits, which allows the optimization through advanced techniques such as the <a href='https://quantum-journal.org/papers/q-2020-05-25-269/pdf/'> quantum natural gradient</a>, as well as to study the loss landscape of such circuits. 
 
 
 ## Quantum Fisher information
