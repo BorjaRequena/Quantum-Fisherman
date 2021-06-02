@@ -1,6 +1,9 @@
 {
-  "qfi": {
+  "fisherman": {
     "Overview": "/",
-    "module name here": "core.html"
+    "Randomized measurements": "randomized.html",
+    "QFI": "examples.qfi.html",
+    "Swap test": "swap.html",
+    "Compute-uncompute  ": "compuncomp.html"
   }
 }

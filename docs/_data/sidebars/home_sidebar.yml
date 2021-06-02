@@ -10,9 +10,18 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
-      title: module name here
-      url: core.html
+      title: Randomized measurements
+      url: randomized.html
+    - output: web,pdf
+      title: QFI
+      url: examples.qfi.html
+    - output: web,pdf
+      title: Swap test
+      url: swap.html
+    - output: web,pdf
+      title: 'Compute-uncompute  '
+      url: compuncomp.html
     output: web
-    title: qfi
+    title: fisherman
   output: web
   title: Sidebar

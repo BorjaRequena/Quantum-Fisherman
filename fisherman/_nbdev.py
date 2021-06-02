@@ -2,11 +2,15 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"random_unitary_circuits": "randomized.ipynb",
-         "randomized_measurement_overlap": "randomized.ipynb"}
+index = {"random_unitary_circuits": "00_randomized.ipynb",
+         "randomized_measurement_overlap": "00_randomized.ipynb",
+         "swap_test_overlap": "02_swap.ipynb",
+         "swap_test_operator": "02_swap.ipynb",
+         "compute_uncompute_overlap": "03_compuncomp.ipynb"}
 
-modules = ["qfi.py",
-           "overlap/randomized.py"]
+modules = ["randomized.py",
+           "swap.py",
+           "comp_uncomp.py"]
 
 doc_url = "https://BorjaRequena.github.io/fisherman/"
 
