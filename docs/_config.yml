@@ -1,7 +1,7 @@
-repository: BorjaRequena/qfi
+repository: BorjaRequena/Quantum-Fisherman
 output: web
-topnav_title: qfi
-site_title: qfi
+topnav_title: fisherman
+site_title: fisherman
 company_name: Borja Requena
 description: Quantum Fisher(man) project in the IBM Qiskit Hackathon 2021
 # Set to false to disable KaTeX math
