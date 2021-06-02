@@ -12,8 +12,8 @@ modules = ["randomized.py",
            "swap.py",
            "comp_uncomp.py"]
 
-doc_url = "https://BorjaRequena.github.io/fisherman/"
+doc_url = "https://BorjaRequena.github.io/Quantum-Fisherman/"
 
-git_url = "https://github.com/BorjaRequena/fisherman/tree/master/"
+git_url = "https://github.com/BorjaRequena/Quantum-Fisherman/tree/master/"
 
 def custom_doc_links(name): return None
