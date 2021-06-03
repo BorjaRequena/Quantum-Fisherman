@@ -47,7 +47,7 @@ nb_path: "nbs/02_swap.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="swap_test_overlap" class="doc_header"><code>swap_test_overlap</code><a href="https://github.com/BorjaRequena/Quantum-Fisherman/tree/master/fisherman/swap.py#L19" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>swap_test_overlap</code>(<strong><code>state0</code></strong>:<code>Union</code>[<code>QuantumCircuit</code>, <code>CircuitStateFn</code>], <strong><code>state1</code></strong>:<code>Union</code>[<code>QuantumCircuit</code>, <code>CircuitStateFn</code>, <code>Iterable</code>[<code>Union</code>[<code>QuantumCircuit</code>, <code>CircuitStateFn</code>]], <code>NoneType</code>]=<em><code>None</code></em>, <strong><code>param_dict</code></strong>:<code>Optional</code>[<code>Dict</code>[<code>ParameterExpression</code>, <code>List</code>[<code>float</code>]]]=<em><code>None</code></em>, <strong><code>backend</code></strong>:<code>Union</code>[<code>Backend</code>, <code>QuantumInstance</code>, <code>NoneType</code>]=<em><code>None</code></em>)</p>
+<h4 id="swap_test_overlap" class="doc_header"><code>swap_test_overlap</code><a href="https://github.com/BorjaRequena/Quantum-Fisherman/tree/master/fisherman/swap.py#L20" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>swap_test_overlap</code>(<strong><code>state0</code></strong>:<code>Union</code>[<code>QuantumCircuit</code>, <code>CircuitStateFn</code>], <strong><code>state1</code></strong>:<code>Union</code>[<code>QuantumCircuit</code>, <code>CircuitStateFn</code>, <code>Iterable</code>[<code>Union</code>[<code>QuantumCircuit</code>, <code>CircuitStateFn</code>]], <code>NoneType</code>]=<em><code>None</code></em>, <strong><code>param_dict</code></strong>:<code>Optional</code>[<code>Dict</code>[<code>ParameterExpression</code>, <code>List</code>[<code>float</code>]]]=<em><code>None</code></em>, <strong><code>backend</code></strong>:<code>Union</code>[<code>Backend</code>, <code>QuantumInstance</code>, <code>NoneType</code>]=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Returns overlap between states using swap test.</p>
 
@@ -99,99 +99,9 @@ nb_path: "nbs/02_swap.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.circuit</span> <span class="kn">import</span> <span class="n">Parameter</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">theta0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;θ&#39;</span><span class="p">)</span>
-<span class="n">qc0</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qc0</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">qc0</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">qc0</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="n">theta0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">qc0</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;mpl&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_png output_subarea output_execute_result">
-<img src="data:image/png;base64,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
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">theta0</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]}</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">state0</span> <span class="o">=</span> <span class="n">CircuitStateFn</span><span class="p">(</span><span class="n">qc0</span><span class="p">)</span><span class="o">.</span><span class="n">bind_parameters</span><span class="p">(</span><span class="n">param_dict</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qc1</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">qc1</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">qc1</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;mpl&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -226,9 +136,82 @@ nb_path: "nbs/02_swap.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">theta0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;θ&#39;</span><span class="p">)</span>
+<span class="n">qc1</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">qc1</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">qc1</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="n">theta0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">qc1</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;mpl&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea output_execute_result">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH0AAAB7CAYAAABZ2Y84AAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjQuMiwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy8rg+JYAAAACXBIWXMAAAsTAAALEwEAmpwYAAAH5klEQVR4nO2df0yU9x3HX3fPHSKDJhJSiTAtJxyNCKTSrA5/gNUpI2mlVfw5IkrmCXTp1LZr5zSLpLiorTZbi6atc40TM6ltN4ZNttU7cFATZsViXUnxkLD5Y+hUmIxfd/uDeA7BAd3h8xzfzyu5P/he7vt9X175fp7nnrvng8nr9XoRlMKsdwDhwSPSFUSkK4hIVxCRriAiXUFEuoKIdAUR6Qoi0hVEpCuISFcQka4gIl1BRLqCiHQFEekKItIVRKQriEhXEJGuICJdQUS6goh0BRHpCiLSFcSidwCjs/nLL6hra9Nl7eSwMF6Ln+b3eUX6ENS1tVH5z+t6x/ArUt4VRKQriEhXEJGuICJdQUS6goh0BRHpCiLSFcTQ0j0eD7t37yYuLo7g4GCSk5NxuVzEx8ezfv16veMNire7m+4Nz9G7/+1+470ffEj399bgbW/XKdldDC09Ly+PoqIiHA4Hx48fZ9myZaxcuZILFy6QkpKid7xBMVmtWF5+EU95BZ7PzgDgdbvxHPgV2ksvYAoN1TcgBr72XlpaysGDB3E6naSlpQEwb948Tp8+zbFjx5gxY4bOCe+P6ZEpmNetoXf3Hkw/30PPz3ZhXvwU5qREvaMBBt7pxcXFZGRk+ITfITY2FqvVSlJSEgBNTU2kpaVht9tJTEykqqpKj7gDMGctxjT5m/Q4CkHTMK/J0TuSD0NKb2lpob6+nuzs7AHPNTc3k5CQwLhx4wBwOBwsX76choYG9u/fz4oVK+jq6hpyDZPJNKyH0+n8Wu/BZDJhSkqEmzcxz38Sk9U64jmcTuewc44Ew0oHiIyM7Dfe0dGBy+XylfbW1lZOnjxJXl4eAKmpqUyaNIkTJ0482MCD4HW78Rw+gnl5Np5Dh/Fevap3JB+GlB4REQFAQ0NDv/GdO3dy6dIl30lcc3MzEydO9O16gJiYGC5evDjkGl6vd1iP9PT0Eef3dnX3HcefzULLW4tp1rfp3fU6Xo9nRPOkp6cPO+dIMOSJnM1mIykpieLiYsLDw4mKiqKsrIyKigoAw56538Fz4JeYLBbMOasB0Ao20OMoxPP+B2jZS3ROZ9CdbjabOXr0KAkJCeTn57N27VoiIiIoLCxE0zTfSdzkyZO5cuUKnZ2dvte63W6mTJmiV3Q8n53BU/Ex2ssvYbL07SlTSAjaj17A894hvG63btnuYAqk1t85OTnU1dVx9uxZ39jChQvJysqioKCA6upqli5dSlNTE0FBQX5Zc0HtKd1+LjV3Qjh/fPwJv89ryPJ+P2pra5k5c2a/sX379pGbm8vevXsJCgqitLTUb8LHKgEjvb29nYaGBgoKCvqN22w2KisrdUoVmASM9NDQUHp7e/WOMSYw5ImcMLqIdAUR6Qoi0hVEpCuISFcQka4gAfM5XS+Sw8LG3NoBde1d8A9S3hVEpCuISFcQka4gIl1BRLqCiHQFEekKItIVRKQriEhXEJGuICJdQeSr1SH48hNo0+mG07CHIf5J/88r0oeg7SrcaNE7hX+R8q4gIl1BRLqCyDHdD2wuSef8xRo0zYrZrBE5IYZV87eQljywZ44REOl+YvWCraxe8BN6e3v4qPoX7Di8itiox4iKiNU72gCkvPsZTbPw3Se+T6+nh8a/n9E7zqCIdD/T3dNFeXUJANERdp3TDI6Udz9x+E+vctS1m47ONjTNyqbsd7BN6uuN87fWr3j10HLeeK4GqyWI3zh3cbuzjdxF23XJauidHkgNgVfN38KHRTco+2kr33o0k7qv7vayi4qIZXbiEo58soNL1904zxxh1fwtumU1tPRAbAgcFjKBTdnvcOqvv6e6/iPf+LL0F/n0fDnFv15J/tN7CbKM+x+zjC6GLe+B3BD4oZBwlszZxIGPf8zMaU9hNpuxaFYSbXM5db6c6TGzdc1n2J0+3IbA27Ztw263YzabKSsr0yPqoDwz53mu37rEH/7yHgBNl89xrunPPBa7gIpTbw/x6tHFkDv9TkPgjRs3Dnju3obAGRkZ5Obmsm7dugcd08dr+c4BY98Ifohj2/v6z3k8Ht44toEfPPMm0RF2nn8zldSExUwIm/iAk/ZhyJ0+3IbA0NcE2GazjXiN4XZXdrmc/9d7AfhdTQlxUSnYo1MICQ4jd1ERb/32h0O+zuUanS7Qhtzp/90QODMz0zd+b0PgQGHxrMJ+f8+ansWs6Vn6hMGg0h9EQ+Dh3qFde0S/79PT0tLxlvj/TnJDlvfhNgQWvh6G3OkAdrt9QLP+nJwcpk2bxvjx43VKNTYw5E6/H7W1tQNK+9atW4mOjqampgaHw0F0dDSNjY06JezPuxWvsOmtubxb8YreUfoRMNLvNAS+96JMUVERLS0tdHZ2cu3aNVpaWpg6dapOKe/ivlzPv/59i9cLKrl1+xpNl8/pHcmHYcv7vQRaQ+B690kety8EYEbcd/jcXcUjkQk6p+ojYKQHGm23r1Nes4/3q/bQ3nGDtORlekfyIdJHibCQcNYs2k5qwtN8+kU5/7hpnN9RB8wxPdCYHjObzy/0/fOBukYniTFzdE50F5E+SsRETseiWdlcko5FsxrmeA5S3keVvMwdekcYFNnpCiLSFUTK+xCEPTz21paGwAoi5V1BRLqCiHQFEekKItIVRKQriEhXEJGuICJdQUS6goh0BRHpCiLSFUSkK4hIVxCRriAiXUFEuoL8B96Wkvq9vvf+AAAAAElFTkSuQmCC
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">state0</span> <span class="o">=</span> <span class="n">CircuitStateFn</span><span class="p">(</span><span class="n">qc0</span><span class="p">)</span>
-<span class="n">state1</span> <span class="o">=</span> <span class="n">CircuitStateFn</span><span class="p">(</span><span class="n">qc1</span><span class="p">)</span>
-<span class="n">n_qubits</span> <span class="o">=</span> <span class="n">state0</span><span class="o">.</span><span class="n">num_qubits</span>
+<span class="n">purity</span> <span class="o">=</span> <span class="n">swap_test_overlap</span><span class="p">(</span><span class="n">state0</span><span class="p">)</span>
+<span class="n">purity</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([1.])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">theta_values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]</span>
+<span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">theta0</span><span class="p">:</span> <span class="n">theta_values</span><span class="p">}</span>
 </pre></div>
 
     </div>
@@ -245,7 +228,9 @@ nb_path: "nbs/02_swap.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">overlaps</span> <span class="o">=</span> <span class="n">swap_test_overlap</span><span class="p">(</span><span class="n">qc0</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">state0</span> <span class="o">=</span> <span class="n">CircuitStateFn</span><span class="p">(</span><span class="n">qc0</span><span class="p">)</span>
+<span class="n">state1</span> <span class="o">=</span> <span class="n">CircuitStateFn</span><span class="p">(</span><span class="n">qc1</span><span class="p">)</span><span class="o">.</span><span class="n">bind_parameters</span><span class="p">(</span><span class="n">param_dict</span><span class="p">)</span>
+<span class="n">overlaps</span> <span class="o">=</span> <span class="n">swap_test_overlap</span><span class="p">(</span><span class="n">state0</span><span class="p">,</span> <span class="n">state1</span><span class="p">)</span>
 <span class="n">overlaps</span>
 </pre></div>
 
@@ -261,20 +246,46 @@ nb_path: "nbs/02_swap.ipynb"
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([[ 1.        ,  0.47460938,  0.125     ,  0.05273438,  0.19140625,
-         0.52539062,  1.        ],
-       [ 0.47460938,  1.        ,  0.859375  ,  0.50976562,  0.125     ,
-        -0.0390625 ,  0.48046875],
-       [ 0.125     ,  0.859375  ,  1.        ,  0.86132812,  0.52734375,
-         0.19140625,  0.10351562],
-       [ 0.05273438,  0.50976562,  0.86132812,  1.        ,  0.8515625 ,
-         0.52539062,  0.00585938],
-       [ 0.19140625,  0.125     ,  0.52734375,  0.8515625 ,  1.        ,
-         0.875     ,  0.16992188],
-       [ 0.52539062, -0.0390625 ,  0.19140625,  0.52539062,  0.875     ,
-         1.        ,  0.52929688],
-       [ 1.        ,  0.48046875,  0.10351562,  0.00585938,  0.16992188,
-         0.52929688,  1.        ]])</pre>
+<pre>array([ 1.        ,  0.47851562, -0.0078125 ,  0.44140625,  1.        ])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">param_state</span> <span class="o">=</span> <span class="n">CircuitStateFn</span><span class="p">(</span><span class="n">qc1</span><span class="p">)</span>
+<span class="n">overlaps</span> <span class="o">=</span> <span class="n">swap_test_overlap</span><span class="p">(</span><span class="n">param_state</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">)</span>
+<span class="n">overlaps</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 1.        ,  0.49609375,  0.0078125 ,  0.50195312,  1.        ],
+       [ 0.49609375,  1.        ,  0.48242188,  0.03320312,  0.51171875],
+       [ 0.0078125 ,  0.48242188,  1.        ,  0.50585938, -0.00976562],
+       [ 0.50195312,  0.03320312,  0.50585938,  1.        ,  0.51171875],
+       [ 1.        ,  0.51171875, -0.00976562,  0.51171875,  1.        ]])</pre>
 </div>
 
 </div>
@@ -307,7 +318,7 @@ nb_path: "nbs/02_swap.ipynb"
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([1., 1., 1., 1., 1., 1., 1.])</pre>
+<pre>array([1., 1., 1., 1., 1.])</pre>
 </div>
 
 </div>
@@ -325,7 +336,59 @@ nb_path: "nbs/02_swap.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">overlaps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.providers.aer</span> <span class="kn">import</span> <span class="n">QasmSimulator</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.test.mock</span> <span class="kn">import</span> <span class="n">FakeVigo</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_sim</span> <span class="o">=</span> <span class="n">QasmSimulator</span><span class="o">.</span><span class="n">from_backend</span><span class="p">(</span><span class="n">FakeVigo</span><span class="p">())</span>
+<span class="n">qi_test</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="n">test_sim</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qi_test</span><span class="o">.</span><span class="n">backend</span>
 </pre></div>
 
     </div>
@@ -340,8 +403,8 @@ nb_path: "nbs/02_swap.ipynb"
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([1.        , 0.47460938, 0.125     , 0.05273438, 0.19140625,
-       0.52539062, 1.        ])</pre>
+<pre>QasmSimulator(&#39;qasm_simulator(fake_vigo)&#39;,
+              noise_model=&lt;NoiseModel on [&#39;sx&#39;, &#39;cx&#39;, &#39;id&#39;, &#39;x&#39;, &#39;measure&#39;]&gt;))</pre>
 </div>
 
 </div>
@@ -359,7 +422,116 @@ nb_path: "nbs/02_swap.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_sim</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">noise_model</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;NoiseModel on [&#39;sx&#39;, &#39;cx&#39;, &#39;id&#39;, &#39;x&#39;, &#39;measure&#39;]&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">backend</span> <span class="o">=</span> <span class="n">QasmSimulator</span><span class="p">()</span>
+<span class="n">o</span> <span class="o">=</span> <span class="n">swap_test_overlap</span><span class="p">(</span><span class="n">param_state</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">qi_test</span><span class="p">)</span>
+<span class="n">o</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.66210938, 0.36328125, 0.01953125, 0.3359375 , 0.71875   ],
+       [0.36328125, 0.71289062, 0.35351562, 0.08203125, 0.40039062],
+       [0.01953125, 0.35351562, 0.69335938, 0.375     , 0.0546875 ],
+       [0.3359375 , 0.08203125, 0.375     , 0.68359375, 0.328125  ],
+       [0.71875   , 0.40039062, 0.0546875 , 0.328125  , 0.66796875]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 1.   ,  0.484,  0.008,  0.533,  1.   ],
+       [ 0.484,  1.   ,  0.527,  0.008,  0.508],
+       [ 0.008,  0.527,  1.   ,  0.531, -0.033],
+       [ 0.533,  0.008,  0.531,  1.   ,  0.506],
+       [ 1.   ,  0.508, -0.033,  0.506,  1.   ]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.opflow</span> <span class="kn">import</span> <span class="n">StateFn</span>
 </pre></div>
 
     </div>

@@ -4,6 +4,7 @@ __all__ = ['random_unitary_circuits', 'randomized_measurement_overlap']
 
 # Cell
 import numpy as np
+from .utils import sym_from_triu, vector_basis, hamming_distance
 
 from qiskit import QuantumCircuit
 from qiskit.providers import Backend
@@ -59,7 +60,7 @@ def randomized_measurement_overlap(
     n_qubits = state0.num_qubits
     n_rnd = 2**(6 + n_qubits//2) if n_rnd is None else n_rnd
     U = random_unitary_circuits(n_rnd, n_qubits, local=local)
-    observable = ~Zero @ U @ state
+    observable = (U @ state) if local else (~Zero @ U @ state)
 
     if expectation is not None:
         observable = expectation.convert(observable)
@@ -67,18 +68,46 @@ def randomized_measurement_overlap(
     if backend is not None:
         observable = CircuitSampler(backend).convert(observable)
 
-    rnd_measurements = np.abs(observable.eval())**2
-    product_expectation = (rnd_measurements.T @ rnd_measurements)/rnd_measurements.shape[0]
-
-    def _prefactor(counts):
-        "Hilbert space size estimation from the measurement results."
-        p = counts.mean(0)
-        n_experiments = counts.shape[1]
-        pmat = np.broadcast_to(p, (n_experiments, n_experiments))
-        triu = np.triu(np.ones(n_experiments))
-        tril = np.where(triu==0, 1, 0)
-        return (1/pmat + triu)*(1/pmat.T + tril)
-
-    overlap = _prefactor(rnd_measurements)*product_expectation - 1
+    overlap = _overlap_from_local(observable) if local else _overlap_from_global(observable)
 
     return overlap[0, 1:] if state1 is not None else overlap.squeeze()
+
+def _overlap_from_global(observable):
+    "Overlap computation from measurements obtained through global random unitaries."
+    rnd_meas = np.abs(observable.eval())**2
+    p = rnd_meas.mean(0)
+
+    def _prefactor(counts):
+        "Prefactor `N(N+1)` where `N` is the estimated Hilbert space size."
+        n_experiments = counts.shape[1]
+        pmat = np.broadcast_to(p, (n_experiments, n_experiments))
+        N = 1/pmat # Estimated size of the Hilbert space
+        triu = np.triu(np.ones(n_experiments))
+        tril = np.where(triu==0, 1, 0)
+        return (N + triu)*(N.T + tril)
+
+    product_expectation = (rnd_meas.T @ rnd_meas)/rnd_meas.shape[0]
+    return _prefactor(rnd_meas)*product_expectation - 1
+
+def _overlap_from_local(observable):
+    "Overlap computation from measurements obtained through local random unitaries."
+    statevectors = _statevector_to_matrix(observable.eval())
+    rnd_meas = np.abs(statevectors)**2
+    n_states, n_rnd, _ = rnd_meas.shape
+
+    def _prefactor(n, d=2):
+        "Prefacotr ::math:: $(-d)^{-D(s, s')}$. See Eq. (4) in [ref]"
+        v = vector_basis(n)
+        dists = sym_from_triu([hamming_distance(v_i, v_j)
+                               for i, v_i in enumerate(v) for v_j in v[i:]], d**n)
+        return (-d)**(-dists)
+
+    pref = _prefactor(observable.num_qubits)
+    N = 1/rnd_meas.mean()
+    overlaps = [np.sum(N*pref*(m_i.T @ m_j)/n_rnd)
+                for i, m_i in enumerate(rnd_meas) for m_j in rnd_meas[i:]]
+    return sym_from_triu(overlaps, n_states)
+
+def _statevector_to_matrix(v):
+    list_of_matrices = list(map(lambda x: list(map(lambda y: y.to_matrix().squeeze(), x)), v))
+    return np.array(list_of_matrices).transpose(1, 0, 2)

@@ -4,13 +4,14 @@ __all__ = ['swap_test_overlap', 'swap_test_operator']
 
 # Cell
 import numpy as np
+from .utils import sym_from_triu
 
 from qiskit import BasicAer
 from qiskit.utils import QuantumInstance
 from qiskit.circuit import ParameterExpression
 from qiskit.providers import Backend, BaseBackend
 from qiskit import QuantumCircuit, ClassicalRegister
-from qiskit.opflow import CircuitStateFn, CircuitOp, ExpectationBase
+from qiskit.opflow import CircuitStateFn, CircuitOp
 
 from collections.abc import Iterable
 from typing import Optional, Union, Dict, List, Iterable
@@ -20,7 +21,6 @@ def swap_test_overlap(
     state0: Union[QuantumCircuit, CircuitStateFn],
     state1: Optional[Union[QuantumCircuit, CircuitStateFn, Iterable[Union[QuantumCircuit, CircuitStateFn]]]] = None,
     param_dict: Optional[Dict[ParameterExpression, List[float]]] = None,
-#     expectation: Optional[ExpectationBase] = None,
     backend: Optional[Union[Backend, QuantumInstance]] = None
 ) -> np.ndarray:
     """Returns overlap between states using swap test."""
@@ -70,7 +70,7 @@ def swap_test_overlap(
     p0 = [c.get('0', 0)/sum(c.values()) for c in counts]
     overlaps = 2*np.array(p0) - 1
 
-    return overlaps if param_dict is None else _sym_from_triu(overlaps, len(states))
+    return overlaps if param_dict is None else sym_from_triu(overlaps, len(states))
 
 def swap_test_operator(n_qubits):
     swap_qc = QuantumCircuit(2*n_qubits+1)
@@ -79,9 +79,3 @@ def swap_test_operator(n_qubits):
         swap_qc.cswap(0, q + 1, q + 1 + n_qubits)
     swap_qc.h(0)
     return CircuitOp(swap_qc)
-
-def _sym_from_triu(x, n):
-    sym = np.zeros((n, n))
-    sym[np.triu_indices(n)] = x
-    sym += np.triu(sym, 1).T
-    return sym
