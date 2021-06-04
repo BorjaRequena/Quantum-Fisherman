@@ -7,7 +7,7 @@
                       "Quantum Fisher information": "examples.qfi.html"
                     }
           },
-      "": {
+      "empty1": {
         "Overlap": {
                     "Randomized measurements": "overlap.randomized.html",
                     "Swap test": "overlap.swap.html",
