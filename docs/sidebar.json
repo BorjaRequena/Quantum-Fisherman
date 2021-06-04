@@ -2,10 +2,10 @@
   "fisherman": {
     "Overview": "/",
     "Randomized measurements": "randomized.html",
-    "QFI": "examples.qfi.html",
     "Swap test": "swap.html",
     "Compute-uncompute  ": "compuncomp.html",
+    "Title": "utils.html",
     "Device-independent certification": "examples.di_certification.html",
-    "Title": "utils.html"
+    "QFI": "examples.qfi.html"
   }
 }

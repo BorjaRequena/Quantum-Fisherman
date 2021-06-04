@@ -4,6 +4,7 @@ __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
 index = {"random_unitary_circuits": "00_randomized.ipynb",
          "randomized_measurement_overlap": "00_randomized.ipynb",
+         "device_independent_overlap": "00_randomized.ipynb",
          "swap_test_overlap": "02_swap.ipynb",
          "swap_test_operator": "02_swap.ipynb",
          "compute_uncompute_overlap": "03_compuncomp.ipynb",
@@ -12,9 +13,9 @@ index = {"random_unitary_circuits": "00_randomized.ipynb",
          "vector_basis": "05_utils.ipynb",
          "hamming_distance": "05_utils.ipynb"}
 
-modules = ["randomized.py",
-           "swap.py",
-           "comp_uncomp.py",
+modules = ["overlap/randomized.py",
+           "overlap/swap.py",
+           "overlap/comp_uncomp.py",
            "utils.py"]
 
 doc_url = "https://BorjaRequena.github.io/Quantum-Fisherman/"

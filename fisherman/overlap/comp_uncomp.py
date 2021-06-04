@@ -4,7 +4,7 @@ __all__ = ['compute_uncompute_overlap']
 
 # Cell
 import numpy as np
-from .utils import sym_from_triu, is_exact_simulation
+from ..utils import sym_from_triu, is_exact_simulation
 
 from qiskit import QuantumCircuit
 from qiskit.providers import Backend
@@ -74,6 +74,6 @@ def compute_uncompute_overlap(
         counts = qi.execute(circuits).get_counts()
         counts = counts if isinstance(counts, list) else [counts]
         zero_state = '0'*state0.num_qubits
-        overlap = [c.get(zero_state, 0)/sum(c.values()) for c in counts]
+        overlap = np.array([c.get(zero_state, 0)/sum(c.values()) for c in counts])
 
-        return overlap if param_dict is None else sym_from_triu(overlap, len(states))
+        return overlap.squeeze() if param_dict is None else sym_from_triu(overlap, len(states))

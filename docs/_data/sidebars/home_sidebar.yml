@@ -13,20 +13,20 @@ entries:
       title: Randomized measurements
       url: randomized.html
     - output: web,pdf
-      title: QFI
-      url: examples.qfi.html
-    - output: web,pdf
       title: Swap test
       url: swap.html
     - output: web,pdf
       title: 'Compute-uncompute  '
       url: compuncomp.html
     - output: web,pdf
+      title: Title
+      url: utils.html
+    - output: web,pdf
       title: Device-independent certification
       url: examples.di_certification.html
     - output: web,pdf
-      title: Title
-      url: utils.html
+      title: QFI
+      url: examples.qfi.html
     output: web
     title: fisherman
   output: web

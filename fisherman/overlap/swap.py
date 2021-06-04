@@ -4,7 +4,7 @@ __all__ = ['swap_test_overlap', 'swap_test_operator']
 
 # Cell
 import numpy as np
-from .utils import sym_from_triu
+from ..utils import sym_from_triu
 
 from qiskit import BasicAer
 from qiskit.utils import QuantumInstance
@@ -70,7 +70,7 @@ def swap_test_overlap(
     p0 = [c.get('0', 0)/sum(c.values()) for c in counts]
     overlaps = 2*np.array(p0) - 1
 
-    return overlaps if param_dict is None else sym_from_triu(overlaps, len(states))
+    return overlaps.squeeze() if param_dict is None else sym_from_triu(overlaps, len(states))
 
 def swap_test_operator(n_qubits):
     swap_qc = QuantumCircuit(2*n_qubits+1)
