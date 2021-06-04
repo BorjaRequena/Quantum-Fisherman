@@ -127,7 +127,7 @@ def device_independent_overlap(
     backends: Union[QuantumInstance, Backend, Iterable[Union[QuantumInstance, Backend]]],
     state1: Optional[Union[StateFn, ListOp, List[StateFn]]] = None,
     n_rnd: Optional[int] = None,
-    local: Optional[bool] = True
+    local: bool = True
 ) -> np.ndarray:
     "Computes overlap between states through randomized measurements using different backends."
 

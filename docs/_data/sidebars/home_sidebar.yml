@@ -9,15 +9,19 @@ entries:
     - output: web,pdf
       title: Overview
       url: /
-    - output: web,pdf
-      title: Randomized measurements
-      url: overlap.randomized.html
-    - output: web,pdf
-      title: Swap test
-      url: overlap.swap.html
-    - output: web,pdf
-      title: 'Compute-uncompute  '
-      url: overlap.compuncomp.html
+      subfolders:
+      - output: web
+        subfolderitems:
+        - output: web,pdf
+          title: Randomized measurements
+          url: overlap.randomized.html
+        - output: web,pdf
+          title: Swap test
+          url: overlap.swap.html
+        - output: web,pdf
+          title: 'Compute-uncompute  '
+          url: overlap.compuncomp.html
+        title: Overlap
     - output: web,pdf
       title: Utils
       url: utils.html
