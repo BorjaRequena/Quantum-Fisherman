@@ -8,30 +8,23 @@ entries:
   - output: web,pdf
     title: Overview
     url: /
-  - folderitems:
-    - output: web
-      subfolders:
-      - output: web,pdf
-        title: Device-independent certification
-        url: examples.di_certification.html
-      - output: web,pdf
-        title: Quantum Fisher information
-        url: examples.qfi.html
-      title: Tutorials
-    - output: web
-      subfolders:
-      - output: web,pdf
-        title: Randomized measurements
-        url: overlap.randomized.html
-      - output: web,pdf
-        title: Swap test
-        url: overlap.swap.html
-      - output: web,pdf
-        title: 'Compute-uncompute  '
-        url: overlap.compuncomp.html
-      title: Overlap
+  - output: web,pdf
+    title: Randomized measurements
+    url: /overlap.randomized.html
+  - output: web,pdf
+    title: Swap test
+    url: /overlap.swap.html
+  - output: web,pdf
+    title: 'Compute-uncompute  '
+    url: /overlap.compuncomp.html
   - output: web,pdf
     title: Utils
-    url: utils.html
+    url: /utils.html
+  - output: web,pdf
+    title: Device-independent certification
+    url: /examples.di_certification.html
+  - output: web,pdf
+    title: Quantum Fisher information
+    url: /examples.qfi.html
   output: web
   title: Sidebar
