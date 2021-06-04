@@ -35,7 +35,8 @@ nb_path: "nbs/05_examples.qfi.ipynb"
 $$\mathcal{F}_{i j}=4 \operatorname{Re}\left[\left\langle\partial_{i} \psi(\boldsymbol{\theta}) \mid \partial_{j} \psi(\boldsymbol{\theta})\right\rangle -\left\langle\partial_{i} \psi(\boldsymbol{\theta}) \mid \psi(\boldsymbol{\theta})\right\rangle\left\langle\psi(\boldsymbol{\theta}) \mid \partial_{j} \psi(\boldsymbol{\theta})\right\rangle\right],$$<p></p>
 <p>where $\partial_{i}\psi(\boldsymbol{\theta})$ denotes the partial derivative of the state $\psi(\boldsymbol{\theta})$ with respect to the parameter $\theta_i$. The gradients may be computed via the parameter shift-rule, effectively obtaining the elements of the QFI matrix as</p>
 $$\mathcal{F}_{i j}=-\frac{1}{2} \left(\left|\left\langle\psi(\boldsymbol{\theta}) \mid \psi\left(\boldsymbol{\theta}+\left(\boldsymbol{e}_{i}+\boldsymbol{e}_{j}\right) \frac{\pi}{2}\right)\right\rangle\right|^{2}\right.
--\left|\left\langle\psi(\boldsymbol{\theta}) \mid \psi\left(\boldsymbol{\theta}+\left(\boldsymbol{e}_{i}-\boldsymbol{e}_{j}\right) \frac{\pi}{2}\right)\right\rangle\right|^{2}-\left|\left\langle\psi(\boldsymbol{\theta}) \mid \psi\left(\boldsymbol{\theta}-\left(\boldsymbol{e}_{i}-\boldsymbol{e}_{j}\right) \frac{\pi}{2}\right)\right\rangle\right|^{2} 
+-\left|\left\langle\psi(\boldsymbol{\theta}) \mid \psi\left(\boldsymbol{\theta}+\left(\boldsymbol{e}_{i}-\boldsymbol{e}_{j}\right) \frac{\pi}{2}\right)\right\rangle\right|^{2} \\ 
+-\left|\left\langle\psi(\boldsymbol{\theta}) \mid \psi\left(\boldsymbol{\theta}-\left(\boldsymbol{e}_{i}-\boldsymbol{e}_{j}\right) \frac{\pi}{2}\right)\right\rangle\right|^{2} 
 \left.+\left|\left\langle\psi(\boldsymbol{\theta}) \mid \psi\left(\boldsymbol{\theta}-\left(\boldsymbol{e}_{i}+\boldsymbol{e}_{j}\right) \frac{\pi}{2}\right)\right\rangle\right|^{2}\right).$$<p>Therefore, the method to obtain the the QFI matrix reduces to the computation of a series of fidelities between states under different parameterizations. Such fidelities may be obtained through any algorithm, usually via swap tests or compute-uncompute circuits. Nevertheless, we also have implemented the method based on randomized measurements with both local and global unitaries, which we can use for the task.</p>
 <p>See <a href="https://arxiv.org/abs/2103.15191">[2]</a> for a nice review on QFI and the described methods.</p>
 
@@ -951,10 +952,10 @@ $$G(\rho_0,\rho_1)=\text{Tr}\left[\rho_0\rho_1\right] + \sqrt{\left(1-\text{Tr}\
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="References">References<a class="anchor-link" href="#References"> </a></h2><p>[1] M. Yu <em>et al</em>. <a href="https://arxiv.org/abs/2104.00519"> Experimental estimation of the quantum Fisher information from randomized measurements<a/>. arXiv:2104.0519 (2021).</p>
-<p>[2] J. J. Meyer, <a href="https://arxiv.org/abs/2103.15191">Fisher Information in Noisy Intermediate-Scale Quantum Applications <a/>. arXiv:2103.15191 (2021)</p>
-<p>[3] M. Cerezo <em>et al</em>., <a href="https://iopscience.iop.org/article/10.1088/2058-9565/abfbef/meta"> Sub-quantum Fisher information<a/> <em>QST</em> (2021)</p>
-<p>[4] J. Stokes <em>et al</em>., <a href="https://quantum-journal.org/papers/q-2020-05-25-269/"> Quantum natural gradient <a/>. <em>Quantum</em> 4, 269 (2020).</p>
+<h2 id="References">References<a class="anchor-link" href="#References"> </a></h2><p>[1] M. Yu <em>et al</em>. <a href="https://arxiv.org/abs/2104.00519"> Experimental estimation of the quantum Fisher information from randomized measurements</a>. arXiv:2104.0519 (2021).</p>
+<p>[2] J. J. Meyer, <a href="https://arxiv.org/abs/2103.15191">Fisher Information in Noisy Intermediate-Scale Quantum Applications </a>. arXiv:2103.15191 (2021)</p>
+<p>[3] M. Cerezo <em>et al</em>., <a href="https://iopscience.iop.org/article/10.1088/2058-9565/abfbef/meta"> Sub-quantum Fisher information</a> <em>QST</em> (2021)</p>
+<p>[4] J. Stokes <em>et al</em>., <a href="https://quantum-journal.org/papers/q-2020-05-25-269/"> Quantum natural gradient </a>. <em>Quantum</em> 4, 269 (2020).</p>
 
 </div>
 </div>

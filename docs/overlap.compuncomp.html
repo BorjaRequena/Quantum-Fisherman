@@ -1,6 +1,6 @@
 ---
 
-title: Compute-uncompute  
+title: Compute uncompute  
 
 
 keywords: fastai
@@ -70,6 +70,9 @@ nb_path: "nbs/02_overlap.compuncomp.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>The compute-uncompute method provides the absolute value of the overlap between two quantum states $|\langle\psi|\phi\rangle|^2$. It relies on the assumption that states can be expressed as the unitary evolution of the zero state, e.g. $|\psi\rangle = U_{\psi}|0\rangle$. This way, we can express the overlap between two states as $\langle\psi|\phi\rangle=\langle 0|U_{\psi}^\dagger U _{\phi}|0\rangle$ and obtain its modulus square by preparing the state $U_{\psi}^\dagger U _{\phi}|0\rangle$ and estimating the probability of measuring zero.</p>
+<p>Intuitively, the method prepares a state $U_{\phi}|0\rangle$ and, then, un-prepares the other by applying $U_{\psi}^\dagger$. If both states are the same, the product $U_{\psi}^\dagger U_{\phi}$ is the identity and we measure $|0\rangle$ with probability 1. The more similar the two states are, the more the second operator "undoes" the first one and so the higher the probability of measuring $|0\rangle$.</p>
+<p>In terms of execution in a quantum computer, this method does not require any additional qubits, although it effectively doubles the circuit depth needed to prepare the states as the resulting circuit is the composition of both preparations.</p>
 <p>The overal behaviour is analogous to that of the other overlap computation functions.</p>
 <p>See some function call examples below and refer to <a href="https://borjarequena.github.io/Quantum-Fisherman/#Basic-usage">the basic usage</a> for a joint explanation of the overlap computation functions.</p>
 
