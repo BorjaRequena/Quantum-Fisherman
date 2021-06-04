@@ -11,5 +11,7 @@
                     "Swap test": "overlap.swap.html",
                     "Compute-uncompute  ": "overlap.compuncomp.html"
                   },
-    "Utils": "utils.html"
+    "Utils": {
+                  "Utils": "utils.html"
+            },
 }
