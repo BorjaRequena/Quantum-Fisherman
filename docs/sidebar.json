@@ -1,19 +1,19 @@
 {
   "fisherman": {
     "Overview": "/",
-    "Tutorials": {
       "": {
-        "Device-independent certification": "examples.di_certification.html",
-        "Quantum Fisher information": "examples.qfi.html"
-      }
-    },
-    "Overlap": {
+        "Tutorials": {
+                      "Device-independent certification": "examples.di_certification.html",
+                      "Quantum Fisher information": "examples.qfi.html"
+                    }
+          },
       "": {
-        "Randomized measurements": "overlap.randomized.html",
-        "Swap test": "overlap.swap.html",
-        "Compute-uncompute  ": "overlap.compuncomp.html"
-      }
-    },
+        "Overlap": {
+                    "Randomized measurements": "overlap.randomized.html",
+                    "Swap test": "overlap.swap.html",
+                    "Compute-uncompute  ": "overlap.compuncomp.html"
+                  }
+          },
     "Utils": "utils.html"
   }
 }
