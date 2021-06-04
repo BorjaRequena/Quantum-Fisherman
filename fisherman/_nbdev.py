@@ -2,11 +2,11 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"random_unitary_circuits": "00_randomized.ipynb",
-         "randomized_measurement_overlap": "00_randomized.ipynb",
-         "device_independent_overlap": "00_randomized.ipynb",
-         "swap_test_overlap": "01_swap.ipynb",
-         "compute_uncompute_overlap": "02_compuncomp.ipynb",
+index = {"random_unitary_circuits": "00_overlap.randomized.ipynb",
+         "randomized_measurement_overlap": "00_overlap.randomized.ipynb",
+         "device_independent_overlap": "00_overlap.randomized.ipynb",
+         "swap_test_overlap": "01_overlap.swap.ipynb",
+         "compute_uncompute_overlap": "02_overlap.compuncomp.ipynb",
          "is_exact_simulation": "03_utils.ipynb",
          "sym_from_triu": "03_utils.ipynb",
          "vector_basis": "03_utils.ipynb",

@@ -156,4 +156,31 @@ overlaps.diagonal()
 
 Finally, we have the `device_independent_overlap` method, which computes the overlap between quantum states across devices. The behaviour si similar to that of the previous methods but with backends. 
 
+The most straightforward functionality is the evaluation of two states each running on a backend. 
+
+```
+from qiskit.providers.aer import QasmSimulator, StatevectorSimulator
+```
+
+```
+backends = [QasmSimulator(), StatevectorSimulator()]
+device_independent_overlap(state_0, backends, state1=state_1)
+```
+
+
+
+
+    array([[1.02066603, 0.69954885],
+           [0.69954885, 0.90616036]])
+
+
+
+This returns the overlap between `state_0` executed on the first backend and `state_1` on the second one. Notice that we also obtain the purites. If we only provide a backend, the reference state `state0` is simulated with `StatevectorSimulator`. 
+
+Just like in the previous methods, can input a list of states to compare to a reference state. In this case, we may provide: 
+- A single backend: `state0` is simulated and all states `state1` run in the backend.
+- Two backends: `state0` runs on the first, all `state1` run on the second
+- As many backends as `state1`: `state0` is simulated and `state1` run each on the backends
+- `state0` + `state1` backends: `state0` runs on the first, `state1` states run on the rest. 
+
 For further details about the underlying mechanisms of each method and their arguments, refer to the docs :) 

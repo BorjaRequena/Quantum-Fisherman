@@ -158,9 +158,9 @@ nb_path: "nbs/index.ipynb"
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now, we convert the circuit into a <code>StateFn</code> so that it eases the parameter assignment and operations. The three main methods corresponding to each of the briefly introduced algorithms are:</p>
 <ul>
-<li><a href="/Quantum-Fisherman/compuncomp.html#compute_uncompute_overlap"><code>compute_uncompute_overlap</code></a></li>
-<li><a href="/Quantum-Fisherman/swap.html#swap_test_overlap"><code>swap_test_overlap</code></a></li>
-<li><a href="/Quantum-Fisherman/randomized.html#randomized_measurement_overlap"><code>randomized_measurement_overlap</code></a></li>
+<li><a href="/Quantum-Fisherman/overlap.compuncomp.html#compute_uncompute_overlap"><code>compute_uncompute_overlap</code></a></li>
+<li><a href="/Quantum-Fisherman/overlap.swap.html#swap_test_overlap"><code>swap_test_overlap</code></a></li>
+<li><a href="/Quantum-Fisherman/overlap.randomized.html#randomized_measurement_overlap"><code>randomized_measurement_overlap</code></a></li>
 </ul>
 <p>Let us start by computing the overlap between two states with the three methods.</p>
 
@@ -405,13 +405,74 @@ nb_path: "nbs/index.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Finally, we have the <a href="/Quantum-Fisherman/randomized.html#device_independent_overlap"><code>device_independent_overlap</code></a> method, which computes the overlap between quantum states across devices. The behaviour si similar to that of the previous methods but with backends.</p>
+<p>Finally, we have the <a href="/Quantum-Fisherman/overlap.randomized.html#device_independent_overlap"><code>device_independent_overlap</code></a> method, which computes the overlap between quantum states across devices. The behaviour si similar to that of the previous methods but with backends.</p>
+<p>The most straightforward functionality is the evaluation of two states each running on a backend.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.providers.aer</span> <span class="kn">import</span> <span class="n">QasmSimulator</span><span class="p">,</span> <span class="n">StatevectorSimulator</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">backends</span> <span class="o">=</span> <span class="p">[</span><span class="n">QasmSimulator</span><span class="p">(),</span> <span class="n">StatevectorSimulator</span><span class="p">()]</span>
+<span class="n">device_independent_overlap</span><span class="p">(</span><span class="n">state_0</span><span class="p">,</span> <span class="n">backends</span><span class="p">,</span> <span class="n">state1</span><span class="o">=</span><span class="n">state_1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[1.02066603, 0.69954885],
+       [0.69954885, 0.90616036]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>This returns the overlap between <code>state_0</code> executed on the first backend and <code>state_1</code> on the second one. Notice that we also obtain the purites. If we only provide a backend, the reference state <code>state0</code> is simulated with <code>StatevectorSimulator</code>.</p>
+<p>Just like in the previous methods, can input a list of states to compare to a reference state. In this case, we may provide:</p>
+<ul>
+<li>A single backend: <code>state0</code> is simulated and all states <code>state1</code> run in the backend.</li>
+<li>Two backends: <code>state0</code> runs on the first, all <code>state1</code> run on the second</li>
+<li>As many backends as <code>state1</code>: <code>state0</code> is simulated and <code>state1</code> run each on the backends</li>
+<li><code>state0</code> + <code>state1</code> backends: <code>state0</code> runs on the first, <code>state1</code> states run on the rest. </li>
+</ul>
 <p>For further details about the underlying mechanisms of each method and their arguments, refer to the docs :)</p>
 
 </div>

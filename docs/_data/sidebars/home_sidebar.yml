@@ -11,13 +11,13 @@ entries:
       url: /
     - output: web,pdf
       title: Randomized measurements
-      url: randomized.html
+      url: overlap.randomized.html
     - output: web,pdf
       title: Swap test
-      url: swap.html
+      url: overlap.swap.html
     - output: web,pdf
       title: 'Compute-uncompute  '
-      url: compuncomp.html
+      url: overlap.compuncomp.html
     - output: web,pdf
       title: Title
       url: utils.html
