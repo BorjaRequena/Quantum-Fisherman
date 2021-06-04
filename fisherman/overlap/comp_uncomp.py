@@ -49,7 +49,7 @@ def compute_uncompute_overlap(
         if qi is not None:
             observable = CircuitSampler(qi).convert(observable)
 
-        return np.abs(observable.eval())**2
+        return np.squeeze(np.abs(observable.eval())**2)
 
     else:
         # Workaround to prevent the compiler from converting the circuit to identity

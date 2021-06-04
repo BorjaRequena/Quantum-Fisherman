@@ -72,7 +72,7 @@ def randomized_measurement_overlap(
 
     overlap = _overlap_from_local(observable) if local else _overlap_from_global(observable)
 
-    return overlap[0, 1:] if state1 is not None else overlap.squeeze()
+    return overlap[0, 1:].squeeze() if state1 is not None else overlap.squeeze()
 
 def _overlap_from_global(observable):
     "Overlap computation from measurements obtained through global random unitaries."
