@@ -217,6 +217,25 @@ Operator([[-0.34752919+0.56203462j,  0.08680883-0.41629036j,
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The overlap between quantum states through random measurements can be performed with either local or global unitaries setting <code>local</code> accordingly. The method mainly consists on sampling a set of random unitaries $U$ and, then, evolving and measuring the states of interest. This way, the probability $P(s)$ of measuring a given state $|s\rangle$ after a random unitary evolution $U$ of our initial state $\rho$ is $P(s) = \text{Tr}\left[U\rho U^\dagger|s\rangle\langle s|\right]$ and its expected value over all possible random measurements is $\langle P(s)\rangle=1/N$.</p>
+<p>The expectation of the probability $P(s)$ over all possible random measurements is $\langle P(s)\rangle=1/N$. Measuring higher moments of $P(s)$, i. e. $\langle P(s)^n\rangle$, we can infer the value of $\text{Tr}\left[\rho^n\right]$ <a href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.108.110503">[1]</a>. In this application case, we are mostly interested in computing the second moment $\langle P(s)^2\rangle$, from which we can infer $\text{Tr}\left[\rho^2\right]$. This is not restricted to purities, as we can compute the expectation $\langle P_0(s)P_1(s)\rangle$ from statistics obtained measuring $\rho_0, \ \rho_1$ over the same set of random unitaries $U$.</p>
+<p>With global unitaries, the computation is rather straightforward. We can choose any vector $s$ of the computational basis to compute the statstics from. For convenience we have taken the zero state as our observable <code>~Zero</code>. Then, 
+{% raw %}
+$$\text{Tr}\left[\rho_0\rho_1\right]=N(N+1)\langle P_0(s)P_1(s)\rangle - 1.$$
+{% endraw %}
+The main issue, as discussed above, is the execution of such global operators in the quantum circuits.</p>
+<p>On the other hand, local unitaries are much easier to implement in a quantum computer. Nevertheless, the posterior analysis requires the estimation of the statistics over all the states in the computational basis, rather than just a single one. Then, as derived in <a href="https://science.sciencemag.org/content/364/6437/260.abstract">[2]</a> the overlap between two quantum states may be obtained as
+{% raw %}
+$$\text{Tr}\left[\rho_0\rho_1\right]=N\sum_{s,s'}(-d)^{-D[s,s']}\langle P_0(s)P_1(s')\rangle,$$
+{% endraw %}
+where the sum goes over all pairs of states $s,s'$ in the computational basis, $d$ is the size of the local Hilbert space and $D[s,s']$ is the Hamming distance between states $s,s'$.</p>
+<p>Hence, both approaches present a tradeoff between overloading the quantum (global unitaries) or the classical (local unitaries) hardware. See <a href="https://science.sciencemag.org/content/364/6437/260.abstract">[3]</a> for further detail. In terms of the API, the behaviour of the function is exactly the same besides the <code>local</code> optional argument .</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -251,19 +270,8 @@ Operator([[-0.34752919+0.56203462j,  0.08680883-0.41629036j,
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The overlap between quantum states through random measurements can be performed with either local or global unitaries setting <code>local</code> accordingly. The method mainly consists on sampling a set of random unitaries $U$ and, then, evolving and measuring the states of interest. This way, the probability $P(s)$ of measuring a given state $|s\rangle$ after a random unitary evolution $U$ of our initial state $\rho$ is $P(s) = \text{Tr}\left[U\rho U^\dagger|s\rangle\langle s|\right]$ and its expected value over all possible random measurements is $\langle P(s)\rangle=1/N$.</p>
-<p>The expectation of the probability $P(s)$ over all possible random measurements is $\langle P(s)\rangle=1/N$. Measuring higher moments of $P(s)$, i. e. $\langle P(s)^n\rangle$, we can infer the value of $\text{Tr}\left[\rho^n\right]$ <a href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.108.110503">[1]</a>. In this application case, we are mostly interested in computing the second moment $\langle P(s)^2\rangle$, from which we can infer $\text{Tr}\left[\rho^2\right]$. This is not restricted to purities, as we can compute the expectation $\langle P_0(s)P_1(s)\rangle$ from statistics obtained measuring $\rho_0, \ \rho_1$ over the same set of random unitaries $U$.</p>
-<p>With global unitaries, the computation is rather straightforward. We can choose any vector $s$ of the computational basis to compute the statstics from. For convenience we have taken the zero state as our observable <code>~Zero</code>. Then, 
-{% raw %}
-$$\text{Tr}\left[\rho_0\rho_1\right]=N(N+1)\langle P_0(s)P_1(s)\rangle - 1.$$
-{% endraw %}
-The main issue, as discussed above, is the execution of such global operators in the quantum circuits.</p>
-<p>On the other hand, local unitaries are much easier to implement in a quantum computer. Nevertheless, the posterior analysis requires the estimation of the statistics over all the states in the computational basis, rather than just a single one. Then, as derived in <a href="https://science.sciencemag.org/content/364/6437/260.abstract">[2]</a> the overlap between two quantum states may be obtained as
-{% raw %}
-$$\text{Tr}\left[\rho_0\rho_1\right]=N\sum_{s,s'}(-d)^{-D[s,s']}\langle P_0(s)P_1(s')\rangle,$$
-{% endraw %}
-where the sum goes over all pairs of states $s,s'$ in the computational basis, $d$ is the size of the local Hilbert space and $D[s,s']$ is the Hamming distance between states $s,s'$.</p>
-<p>Hence, both approaches present a tradeoff between overloading the quantum (global unitaries) or the classical (local unitaries) hardware. In terms of the API, the behaviour of the function is exactly the same besides the <code>local</code> optional argument .</p>
+<p>Overlap estimators, such as <a href="/Quantum-Fisherman/overlap.randomized.html#randomized_measurement_overlap"><code>randomized_measurement_overlap</code></a>, are mainly intended to work with <code>StateFn</code> and <code>ListOp</code> objects. However, we provide compatibility with <code>state0</code> in <code>QuantumCircuit</code> with the idea to cover quick purity estimations straight from the circuits.</p>
+<p>In order to illustrate its behaviour, we first need to create a parameterized quantum circuit.</p>
 
 </div>
 </div>
@@ -328,6 +336,13 @@ where the sum goes over all pairs of states $s,s'$ in the computational basis, $
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If a <code>Backend</code> or <code>QuantumInstance</code> is not provided, everything is computed analytically with operator flow. Otherwise, the resulting observables are internally converted with a <code>CircuitSampler</code> built from the backend. Providing an <code>Expectation</code> converts the observable prior to the <code>CircuitSampler</code>.</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -477,7 +492,8 @@ where the sum goes over all pairs of states $s,s'$ in the computational basis, $
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Overlap-across-backends">Overlap across backends<a class="anchor-link" href="#Overlap-across-backends"> </a></h2>
+<h2 id="Overlap-across-backends">Overlap across backends<a class="anchor-link" href="#Overlap-across-backends"> </a></h2><p>A major advantage of the random measurement protocol is that it is device independent, so long as we find the right way to define the unitary transformations across platforms. This allows us to perform the random measurements independently in separate devices and then infer the overlap between the states from the classical statistics.</p>
+
 </div>
 </div>
 </div>
@@ -492,7 +508,7 @@ where the sum goes over all pairs of states $s,s'$ in the computational basis, $
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="device_independent_overlap" class="doc_header"><code>device_independent_overlap</code><a href="https://github.com/BorjaRequena/Quantum-Fisherman/tree/master/fisherman/overlap/randomized.py#L120" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>device_independent_overlap</code>(<strong><code>state0</code></strong>, <strong><code>backends</code></strong>, <strong><code>state1</code></strong>=<em><code>None</code></em>, <strong><code>n_rnd</code></strong>=<em><code>None</code></em>, <strong><code>local</code></strong>=<em><code>True</code></em>)</p>
+<h4 id="device_independent_overlap" class="doc_header"><code>device_independent_overlap</code><a href="https://github.com/BorjaRequena/Quantum-Fisherman/tree/master/fisherman/overlap/randomized.py#L120" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>device_independent_overlap</code>(<strong><code>state0</code></strong>:<code>StateFn</code>, <strong><code>backends</code></strong>:<code>Union</code>[<code>QuantumInstance</code>, <code>Backend</code>, <code>Iterable</code>[<code>Union</code>[<code>QuantumInstance</code>, <code>Backend</code>]]], <strong><code>state1</code></strong>:<code>Union</code>[<code>StateFn</code>, <code>ListOp</code>, <code>List</code>[<code>StateFn</code>], <code>NoneType</code>]=<em><code>None</code></em>, <strong><code>n_rnd</code></strong>:<code>Optional</code>[<code>int</code>]=<em><code>None</code></em>, <strong><code>local</code></strong>:<code>Optional</code>[<code>bool</code>]=<em><code>True</code></em>)</p>
 </blockquote>
 <p>Computes overlap between states through randomized measurements using different backends.</p>
 
@@ -515,7 +531,127 @@ where the sum goes over all pairs of states $s,s'$ in the computational basis, $
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="References">References<a class="anchor-link" href="#References"> </a></h2>
+<p>We can perform a wide range of operations with <a href="/Quantum-Fisherman/overlap.randomized.html#device_independent_overlap"><code>device_independent_overlap</code></a>. It has a similar behaviour to that of the other overlap computation functions with the main difference being that it does not accept parameter-dependent states.</p>
+<p>The most basic functionality is the calculation of the purity of a state in various backends. This is done by providing a single <code>state0</code> input and a collection of backends.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;mpl&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea output_execute_result">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHMAAABOCAYAAAATpymVAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjQuMiwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy8rg+JYAAAACXBIWXMAAAsTAAALEwEAmpwYAAACnUlEQVR4nO3csWsaYRzG8eeq4JDJpYqBelB0cpQOR0EH65ClcPkHXDt0cgkUFSR16tatZMiWpdGWgAS6KAcZgv0LpGCGQOhihx4WGrgOpQGJ0DNY3jdPnw/c8h7c/eSL53mIThRFEYTCA9MDyOYoJhHFJKKYRBSTiGISUUwiiklEMYkoJhHFJKKYRBSTiGISUUwiiklEMYkoJhHFJKKYRBSTiGISUUwiiklEMYkoJhHFJJI0PYAp/QlwOTdz7u004Jc3f9z/NublHPjy1fQUm6XLLBHFJKKYRBSTiGISUUwiiklEMYkoZkzv96s4/7Afe90EK2MOBgOUSiWkUikUi0UcHByg0WjAdV3To1nNusd5p6en2N3dRa1WQ6/XQxiG6HQ6WCwWSCQSpsezmnUx2+02XNfFcDhEMvl7PM/zUCgUkMvlDE9nN6tihmGIyWSCZrN5ExIA8vk8PM/DbDYzNxyA84+v8Xn4Zmnt54/veFSqGZpomVWfmfP5HFEUIZvN3tq3am0Vx3FibePxaO35njx/hRfvvi1tueLTtY8zHo9iz7kOq2Km02k4joOrq6tb+1atyTKrYm5tbaFcLuP4+BjX19c36xcXFzg7O4t1jCiKYm2VSvUfvYq/q1Sqsedch1UxAaDb7WI2m2FnZwcnJyc4OjpCvV5HJpMxPZr1HBv/orTf76PVamE6nSKfz2Nvbw9BEGA0Gm3sJujtJ3O/NHj8EHj5bPPHtepu9g/f9+H7/tJaEASGprk/rLvMyt0pJhErL7OrHB4emh7BenpnElFMIopJRDGJKCYRxSRyb76abNp2mu/cVj6blbvRZZaIYhJRTCKKSUQxiSgmEcUkophEFJOIYhJRTCKKSUQxiSgmEcUkophEFJOIYhL5Bdppyx+s9Ww/AAAAAElFTkSuQmCC
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">CircuitStateFn</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
+<span class="n">backends</span> <span class="o">=</span> <span class="p">[</span><span class="n">QasmSimulator</span><span class="p">(),</span> <span class="n">QasmSimulator</span><span class="o">.</span><span class="n">from_backend</span><span class="p">(</span><span class="n">FakeVigo</span><span class="p">())]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">purities</span> <span class="o">=</span> <span class="n">device_independent_overlap</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">backends</span><span class="p">)</span>
+<span class="n">purities</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.99763748, 0.92217925],
+       [0.92217925, 0.85981494]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The outputs follow the same phylosophy as when <a href="/Quantum-Fisherman/overlap.randomized.html#randomized_measurement_overlap"><code>randomized_measurement_overlap</code></a> is provided with a <code>param_dict</code>: return the overlap between everything. Hence, the diagonal always contains the purity of each state in its backend.</p>
+<p>As an optional input, it accepts a set of states <code>state1</code> with which the overlaps are computed. In this case, it distributes the provided backends in a rather intuitive way following two main principles:</p>
+<ul>
+<li>If there is no backend for <code>state0</code> it loads a <code>StatevectorSimulator</code>.</li>
+<li><code>state0</code> always takes the first backend.</li>
+</ul>
+<p>Therefore, we identify the following cases as function of the amount of provided backends:</p>
+<ul>
+<li>A single backend: <code>state0</code> is simulated and all states <code>state1</code> run in the backend.</li>
+<li>Two backends: <code>state0</code> runs on the first, all <code>state1</code> run on the second.</li>
+<li>As many backends as <code>state1</code>: <code>state0</code> is simulated and <code>state1</code> run each on the backends.</li>
+<li><code>state0</code> + <code>state1</code> backends: <code>state0</code> runs on the first, <code>state1</code> states run on the rest. </li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="References">References<a class="anchor-link" href="#References"> </a></h2><p>[1] S. J. van Enk and C. W. J. Beenakker, <a href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.108.110503"> Measuring $\text{Tr}\rho^n$ on single copies of $\rho$ using random measurements.</a> <em>PRL</em> 108, 110503 (2012).</p>
+<p>[2] T. Brydges <em>et al</em>. <a href="https://science.sciencemag.org/content/364/6437/260.abstract"> Probing Rényi entanglement entropy via randomized measurements</a> <em>Science</em> 364, 6437, pp. 260-263 (2019).</p>
+<p>[3] A. Elben <em>et al.</em>, <a href="https://journals.aps.org/pra/abstract/10.1103/PhysRevA.99.052323"> Statistical correlations between locally randomized measurements: A toolbox for probing entanglement in many-body quantum states.</a> <em>PRA</em> 99, 052323 (2019).</p>
+
 </div>
 </div>
 </div>

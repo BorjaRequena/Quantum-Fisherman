@@ -4,7 +4,7 @@ __all__ = ['random_unitary_circuits', 'randomized_measurement_overlap', 'device_
 
 # Cell
 import numpy as np
-from ..utils import sym_from_triu, vector_basis, hamming_distance
+from ..utils import sym_from_triu, statevector_basis, hamming_distance
 
 from qiskit import QuantumCircuit
 from qiskit.providers import Backend
@@ -101,7 +101,7 @@ def _overlap_from_local(observable, transp_sv=True):
 
     def _prefactor(n, d=2):
         "Prefacotr ::math:: $(-d)^{-D(s, s')}$. See Eq. (4) in [ref]"
-        v = vector_basis(n)
+        v = statevector_basis(n)
         dists = sym_from_triu([hamming_distance(v_i, v_j)
                                for i, v_i in enumerate(v) for v_j in v[i:]], d**n)
         return (-d)**(-dists)
@@ -117,7 +117,13 @@ def _statevector_to_matrix(v):
     return np.array(list_of_matrices)
 
 # Cell
-def device_independent_overlap(state0, backends, state1=None, n_rnd=None, local=True):
+def device_independent_overlap(
+    state0: StateFn,
+    backends: Union[QuantumInstance, Backend, Iterable[Union[QuantumInstance, Backend]]],
+    state1: Optional[Union[StateFn, ListOp, List[StateFn]]] = None,
+    n_rnd: Optional[int] = None,
+    local: Optional[bool] = True
+) -> np.ndarray:
     "Computes overlap between states through randomized measurements using different backends."
 
     n_qubits = state0.num_qubits

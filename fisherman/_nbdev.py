@@ -9,7 +9,7 @@ index = {"random_unitary_circuits": "00_overlap.randomized.ipynb",
          "compute_uncompute_overlap": "02_overlap.compuncomp.ipynb",
          "is_exact_simulation": "03_utils.ipynb",
          "sym_from_triu": "03_utils.ipynb",
-         "vector_basis": "03_utils.ipynb",
+         "statevector_basis": "03_utils.ipynb",
          "hamming_distance": "03_utils.ipynb"}
 
 modules = ["overlap/randomized.py",

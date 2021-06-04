@@ -68,6 +68,58 @@ nb_path: "nbs/01_overlap.swap.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The swap test is one of the most common ways of computing the overlap between quantum states. It relies on the construction of a circuit of $2n+1$ qubits, where $n$ is the number of qubits of the states that are to be compared. The additional qubit is used as control qubit for a set of control-swap gates performed between the qubits of the states.</p>
+<p>We have taken the convention of having the additional qubit as the first one. This way, the operator applied to the tensored states looks as follows for two 3-qubit states.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">_swap_test_operator</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;mpl&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea output_execute_result">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The first state $|\psi\rangle$ would, for instance, take qubits $q_1, q_2, q_3$ and the second state $|\phi\rangle$ would take $q_4, q_5, q_6$. The ancilla qubit, $q0$ is then measured and the probability of measuring zero $P_0$ is proportional to the overlap between the states, such that $$\text{Tr}\left[\rho_\psi\rho_\phi\right] = 2P_0 - 1.$$</p>
+<p>The behaviour is analogous to the other overlap computation functions with the exception that <a href="/Quantum-Fisherman/overlap.swap.html#swap_test_overlap"><code>swap_test_overlap</code></a> does accept <code>QuantumCircuit</code> inputs, provided that it heavily relies on quantum circuit construction.</p>
+<p>See some function call examples below and refer to <a href="https://borjarequena.github.io/Quantum-Fisherman/#Basic-usage">the basic usage</a> for a joint explanation of the overlap computation functions.</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -299,218 +351,6 @@ nb_path: "nbs/01_overlap.swap.ipynb"
 
 </div>
 
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.providers.aer</span> <span class="kn">import</span> <span class="n">QasmSimulator</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.test.mock</span> <span class="kn">import</span> <span class="n">FakeVigo</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_sim</span> <span class="o">=</span> <span class="n">QasmSimulator</span><span class="o">.</span><span class="n">from_backend</span><span class="p">(</span><span class="n">FakeVigo</span><span class="p">())</span>
-<span class="n">qi_test</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="n">test_sim</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qi_test</span><span class="o">.</span><span class="n">backend</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>QasmSimulator(&#39;qasm_simulator(fake_vigo)&#39;,
-              noise_model=&lt;NoiseModel on [&#39;sx&#39;, &#39;cx&#39;, &#39;id&#39;, &#39;x&#39;, &#39;measure&#39;]&gt;))</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_sim</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">noise_model</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;NoiseModel on [&#39;sx&#39;, &#39;cx&#39;, &#39;id&#39;, &#39;x&#39;, &#39;measure&#39;]&gt;</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">backend</span> <span class="o">=</span> <span class="n">QasmSimulator</span><span class="p">()</span>
-<span class="n">o</span> <span class="o">=</span> <span class="n">swap_test_overlap</span><span class="p">(</span><span class="n">param_state</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">qi_test</span><span class="p">)</span>
-<span class="n">o</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([[0.66210938, 0.36328125, 0.01953125, 0.3359375 , 0.71875   ],
-       [0.36328125, 0.71289062, 0.35351562, 0.08203125, 0.40039062],
-       [0.01953125, 0.35351562, 0.69335938, 0.375     , 0.0546875 ],
-       [0.3359375 , 0.08203125, 0.375     , 0.68359375, 0.328125  ],
-       [0.71875   , 0.40039062, 0.0546875 , 0.328125  , 0.66796875]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([[ 1.   ,  0.484,  0.008,  0.533,  1.   ],
-       [ 0.484,  1.   ,  0.527,  0.008,  0.508],
-       [ 0.008,  0.527,  1.   ,  0.531, -0.033],
-       [ 0.533,  0.008,  0.531,  1.   ,  0.506],
-       [ 1.   ,  0.508, -0.033,  0.506,  1.   ]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.opflow</span> <span class="kn">import</span> <span class="n">StateFn</span>
-</pre></div>
-
-    </div>
 </div>
 </div>
 
