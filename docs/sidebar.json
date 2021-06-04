@@ -1,17 +1,11 @@
 {
-    "Getting started": {
-                      "Overview": "/"
-                    },
+    "Overview": "/",
+    "Randomized measurements": "/overlap.randomized.html",
+    "Swap test": "/overlap.swap.html",
+    "Compute-uncompute  ": "/overlap.compuncomp.html",
+    "Utils": "/utils.html",
     "Tutorials": {
                       "Device-independent certification": "/examples.di_certification.html",
                       "Quantum Fisher information": "/examples.qfi.html"
-                  },
-    "Overlap": {
-                   "Randomized measurements": "/overlap.randomized.html",
-                    "Swap test": "/overlap.swap.html",
-                    "Compute-uncompute  ": "/overlap.compuncomp.html"
-                  },
-    "Utils": {
-                  "Utils": "/utils.html"
-            }
+                  }
 }
