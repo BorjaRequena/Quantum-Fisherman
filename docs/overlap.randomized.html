@@ -252,17 +252,18 @@ Operator([[-0.34752919+0.56203462j,  0.08680883-0.41629036j,
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The overlap between quantum states through random measurements can be performed with either local or global unitaries setting <code>local</code> accordingly. The method mainly consists on sampling a set of random unitaries $U$ and, then, evolving and measuring the states of interest. This way, the probability $P(s)$ of measuring a given state $|s\rangle$ after a random unitary evolution $U$ of our initial state $\rho$ is $P(s) = \text{Tr}\left[U\rho U^\dagger|s\rangle\langle s|\right]$ and its expected value over all possible random measurements is $\langle P(s)\rangle=1/N$.</p>
-<p>The expectation of the probability $P(s)$ over all possible random measurements is $\langle P(s)\rangle=1/N$. Measuring higher moments of $P(s)$, i. e. $\langle P(s)^n\rangle$, we can infer the value of $\text{Tr}\left[\rho^n\right]$ <a href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.108.110503">[1]</a>. In this application case, we are mostly interested in computing the second moment $\langle P(s)^2\rangle$, from which we can infer $\text{Tr}\left[\rho^2\right]$. This is not restricted to purities, as we can compute the expectation $\langle P_0(s)P_1(s)\rangle$ from statistics obtained measuring $\rho_0, \ \rho_1$</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Now that we have a better understanding of the effect of noise in state preparation and we have got familiar with the concept of overlap and purity, let us find the overlap between states prepared in different platforms. As previously mentioned, this has great potential in the certification of quantum devices, as it allows us to assess the quality of state preparation and measurement of a quantum device by comparing it with a known reference.</p>
-<p>Given that the swap test and the compute-uncompute methods are based on circuits that contain both states at once, this cross-platform certification can only be performed via random measurements. In this method, we perform a series of random measurements, characterized by a set of random unitary matrices $U$ uniformly sampled from the Haar measure. This way, the probability $P_U(s)$ of measuring a given state $|s\rangle$ after a random unitary evolution $U$ of our initial state $\rho$ is $P(s) = \text{Tr}\left[U\rho U^\dagger|s\rangle\langle s|\right]$ and its expected value over all possible random measurements is $\langle P(s)\rangle=1/N_H$.</p>
-<p>By measuring higher moments of $P(s)$, $\langle P(s)^n\rangle$, we can infer the value of $\text{Tr}\left[\rho^n\right]$ (see [[1]] and <a href="https://journals.aps.org/pra/abstract/10.1103/PhysRevA.99.052323">[2]</a>). In particular, we can infer the purity of a state $\text{Tr}\left[\rho^2\right]$ from its second moment $\langle P(s)^2\rangle$ and, even more, this allows us to infer the overlap between two states $\rho_0, \ \rho_1$ from $\langle P_0(s)P_1(s)\rangle$. The only requirement is that the set of random measurements $U$ must the same for the two states. Hence, as long as we are able to find a way to properly define the random unitaries, we can find the overlap between quantum states of any arbitrary nature.</p>
-<p>The function <a href="/Quantum-Fisherman/overlap.randomized.html#device_independent_overlap"><code>device_independent_overlap</code></a> allows us to compute such cross-platform overlaps with ease. For instance, we can compute the overlap between our simulated $|GHZ\rangle$ state and the same state prepared in the (simulated) noisy backend.</p>
+<p>The expectation of the probability $P(s)$ over all possible random measurements is $\langle P(s)\rangle=1/N$. Measuring higher moments of $P(s)$, i. e. $\langle P(s)^n\rangle$, we can infer the value of $\text{Tr}\left[\rho^n\right]$ <a href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.108.110503">[1]</a>. In this application case, we are mostly interested in computing the second moment $\langle P(s)^2\rangle$, from which we can infer $\text{Tr}\left[\rho^2\right]$. This is not restricted to purities, as we can compute the expectation $\langle P_0(s)P_1(s)\rangle$ from statistics obtained measuring $\rho_0, \ \rho_1$ over the same set of random unitaries $U$.</p>
+<p>With global unitaries, the computation is rather straightforward. We can choose any vector $s$ of the computational basis to compute the statstics from. For convenience we have taken the zero state as our observable <code>~Zero</code>. Then, 
+{% raw %}
+$$\text{Tr}\left[\rho_0\rho_1\right]=N(N+1)\langle P_0(s)P_1(s)\rangle - 1.$$
+{% endraw %}
+The main issue, as discussed above, is the execution of such global operators in the quantum circuits.</p>
+<p>On the other hand, local unitaries are much easier to implement in a quantum computer. Nevertheless, the posterior analysis requires the estimation of the statistics over all the states in the computational basis, rather than just a single one. Then, as derived in <a href="https://science.sciencemag.org/content/364/6437/260.abstract">[2]</a> the overlap between two quantum states may be obtained as
+{% raw %}
+$$\text{Tr}\left[\rho_0\rho_1\right]=N\sum_{s,s'}(-d)^{-D[s,s']}\langle P_0(s)P_1(s')\rangle,$$
+{% endraw %}
+where the sum goes over all pairs of states $s,s'$ in the computational basis, $d$ is the size of the local Hilbert space and $D[s,s']$ is the Hamming distance between states $s,s'$.</p>
+<p>Hence, both approaches present a tradeoff between overloading the quantum (global unitaries) or the classical (local unitaries) hardware. In terms of the API, the behaviour of the function is exactly the same besides the <code>local</code> optional argument .</p>
 
 </div>
 </div>

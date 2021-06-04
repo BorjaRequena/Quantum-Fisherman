@@ -1,5 +1,4 @@
 {
-  "fisherman": {
     "Overview": "/",
       "": {
         "Tutorials": {
@@ -15,5 +14,4 @@
                   }
           },
     "Utils": "utils.html"
-  }
 }
