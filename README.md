@@ -1,5 +1,5 @@
 # Quantum Fisher(man)
-> Quantum Fisher(man) project developed for the <a href='https://qiskithackathoneurope.bemyapp.com'>IBM Qiskit Hackathon 2021</a>. We provide a toolkit to compute the overlap between quantum states. We apply it to obtain the quantum Fisher information from quantum circuits, which allows the optimization through advanced techniques such as the <a href='https://quantum-journal.org/papers/q-2020-05-25-269/pdf/'> quantum natural gradient</a>, as well as to study the loss landscape of such circuits. Furthermore, we provide a functionality to compute the overlap between quantum states from devices, enabling device-independent certification. 
+> Quantum Fisher(man) project developed for the <a href='https://qiskithackathoneurope.bemyapp.com'>IBM Qiskit Hackathon 2021</a>. We provide a toolkit to compute the overlap between quantum states (see <a href="https://borjarequena.github.io/Quantum-Fisherman/">the docs</a>). We apply it to obtain the quantum Fisher information from quantum circuits, which allows the optimization through advanced techniques such as the <a href='https://quantum-journal.org/papers/q-2020-05-25-269/pdf/'> quantum natural gradient</a>, as well as to study the loss landscape of such circuits. Furthermore, we provide a functionality to compute the overlap between quantum states from devices, enabling device-independent certification. 
 
 
 ## Quantum Fisher information
@@ -28,7 +28,7 @@ Simply clone this repository to `what/ever/path/Quantum-Fisherman` and, from `wh
 
 ## Basic usage
 
-The package is designed to be very straightforward with a simple API. It is prepared to import all the key functionalities at once as follows
+The package is designed to be very straightforward with a [simple API](https://borjarequena.github.io/Quantum-Fisherman/). It is prepared to import all the key functionalities at once as follows
 
 ```
 from fisherman.overlap.all import *
