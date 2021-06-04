@@ -25,7 +25,7 @@ entries:
       title: Device-independent certification
       url: examples.di_certification.html
     - output: web,pdf
-      title: QFI
+      title: Quantum Fisher information
       url: examples.qfi.html
     output: web
     title: fisherman

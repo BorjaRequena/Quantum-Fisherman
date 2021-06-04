@@ -6,6 +6,6 @@
     "Compute-uncompute  ": "compuncomp.html",
     "Title": "utils.html",
     "Device-independent certification": "examples.di_certification.html",
-    "QFI": "examples.qfi.html"
+    "Quantum Fisher information": "examples.qfi.html"
   }
 }

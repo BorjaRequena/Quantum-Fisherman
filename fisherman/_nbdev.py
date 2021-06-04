@@ -5,13 +5,12 @@ __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 index = {"random_unitary_circuits": "00_randomized.ipynb",
          "randomized_measurement_overlap": "00_randomized.ipynb",
          "device_independent_overlap": "00_randomized.ipynb",
-         "swap_test_overlap": "02_swap.ipynb",
-         "swap_test_operator": "02_swap.ipynb",
-         "compute_uncompute_overlap": "03_compuncomp.ipynb",
-         "is_exact_simulation": "05_utils.ipynb",
-         "sym_from_triu": "05_utils.ipynb",
-         "vector_basis": "05_utils.ipynb",
-         "hamming_distance": "05_utils.ipynb"}
+         "swap_test_overlap": "01_swap.ipynb",
+         "compute_uncompute_overlap": "02_compuncomp.ipynb",
+         "is_exact_simulation": "03_utils.ipynb",
+         "sym_from_triu": "03_utils.ipynb",
+         "vector_basis": "03_utils.ipynb",
+         "hamming_distance": "03_utils.ipynb"}
 
 modules = ["overlap/randomized.py",
            "overlap/swap.py",

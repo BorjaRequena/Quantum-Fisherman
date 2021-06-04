@@ -1,13 +1,13 @@
 ---
 
-title: QFI
+title: Quantum Fisher information
 
 
 keywords: fastai
 sidebar: home_sidebar
 
-summary: "Implementation of the method introduced in <a href='https://arxiv.org/pdf/2104.00519.pdf'>this paper</a>."
-description: "Implementation of the method introduced in <a href='https://arxiv.org/pdf/2104.00519.pdf'>this paper</a>."
+summary: "Computation of the quantum Fisher information of parameterized quantum states showcasing the functionalities of the developped package. "
+description: "Computation of the quantum Fisher information of parameterized quantum states showcasing the functionalities of the developped package. "
 nb_path: "nbs/05_examples.qfi.ipynb"
 ---
 <!--
@@ -29,6 +29,26 @@ nb_path: "nbs/05_examples.qfi.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="QFI-from-parameter-shift-rule">QFI from parameter shift-rule<a class="anchor-link" href="#QFI-from-parameter-shift-rule"> </a></h2><p>The elements of the QFI matrix of a parameterized state $\psi(\boldsymbol{\theta})$ are defined by</p>
+$$\mathcal{F}_{i j}=4 \operatorname{Re}\left[\left\langle\partial_{i} \psi(\boldsymbol{\theta}) \mid \partial_{j} \psi(\boldsymbol{\theta})\right\rangle -\left\langle\partial_{i} \psi(\boldsymbol{\theta}) \mid \psi(\boldsymbol{\theta})\right\rangle\left\langle\psi(\boldsymbol{\theta}) \mid \partial_{j} \psi(\boldsymbol{\theta})\right\rangle\right],$$<p></p>
+<p>where $\partial_{i}\psi(\boldsymbol{\theta})$ denotes the partial derivative of the state $\psi(\boldsymbol{\theta})$ with respect to the parameter $\theta_i$. The gradients may be computed via the parameter shift-rule, effectively obtaining the elements of the QFI matrix as</p>
+$$\mathcal{F}_{i j}=-\frac{1}{2} \left(\left|\left\langle\psi(\boldsymbol{\theta}) \mid \psi\left(\boldsymbol{\theta}+\left(\boldsymbol{e}_{i}+\boldsymbol{e}_{j}\right) \frac{\pi}{2}\right)\right\rangle\right|^{2}\right.
+-\left|\left\langle\psi(\boldsymbol{\theta}) \mid \psi\left(\boldsymbol{\theta}+\left(\boldsymbol{e}_{i}-\boldsymbol{e}_{j}\right) \frac{\pi}{2}\right)\right\rangle\right|^{2}-\left|\left\langle\psi(\boldsymbol{\theta}) \mid \psi\left(\boldsymbol{\theta}-\left(\boldsymbol{e}_{i}-\boldsymbol{e}_{j}\right) \frac{\pi}{2}\right)\right\rangle\right|^{2} 
+\left.+\left|\left\langle\psi(\boldsymbol{\theta}) \mid \psi\left(\boldsymbol{\theta}-\left(\boldsymbol{e}_{i}+\boldsymbol{e}_{j}\right) \frac{\pi}{2}\right)\right\rangle\right|^{2}\right).$$<p>Therefore, the method to obtain the the QFI matrix reduces to the computation of a series of fidelities between states under different parameterizations. Such fidelities may be obtained through any algorithm, usually via swap tests or compute-uncompute circuits. Nevertheless, we also have implemented the method based on randomized measurements with both local and global unitaries, which we can use for the task.</p>
+<p>See <a href="https://arxiv.org/abs/2103.15191">[2]</a> for a nice review on QFI and the described methods.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="State-and-parameter-definition">State and parameter definition<a class="anchor-link" href="#State-and-parameter-definition"> </a></h3><p>We will start by defining a parameterized state that depends on three parameters $\boldsymbol{\theta} = [\theta_0, \theta_1, \theta_2]^T$. We will prepare a GHZ state and add a rotation around the <em>x</em> axis on every qubit, similar to the state prepared in <a href="https://arxiv.org/pdf/2104.00519.pdf">[1]</a> (see Fig. 2).</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -36,52 +56,14 @@ nb_path: "nbs/05_examples.qfi.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
-<span class="kn">from</span> <span class="nn">qiskit.circuit</span> <span class="kn">import</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">qiskit.opflow</span> <span class="kn">import</span> <span class="n">CircuitStateFn</span>
-<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">BasicAer</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_qubits</span> <span class="o">=</span> <span class="mi">3</span>
 
-<span class="kn">from</span> <span class="nn">fisherman.randomized</span> <span class="kn">import</span> <span class="n">randomized_measurement_overlap</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_qubits</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">backend</span> <span class="o">=</span> <span class="n">BasicAer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;statevector_simulator&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">theta0</span><span class="p">,</span> <span class="n">theta1</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;θ0&#39;</span><span class="p">),</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;θ1&#39;</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">ParameterVector</span><span class="p">(</span><span class="s1">&#39;θ&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">param_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span> <span class="c1"># arbitrary parameter assignment</span>
 <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span>
 <span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">qc</span><span class="o">.</span><span class="n">rz</span><span class="p">(</span><span class="n">theta0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">qc</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="n">theta1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">):</span> <span class="n">qc</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">)</span>
 <span class="n">qc</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;mpl&#39;</span><span class="p">)</span>
 </pre></div>
 
@@ -97,7 +79,7 @@ nb_path: "nbs/05_examples.qfi.ipynb"
 
 
 <div class="output_png output_subarea output_execute_result">
-<img src="data:image/png;base64,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
+<img src="data:image/png;base64,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
 "
 >
 </div>
@@ -110,6 +92,62 @@ nb_path: "nbs/05_examples.qfi.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>{% include note.html content='This circuit has been chosen to illustrate the process with an intuitive and simple example that we can relate to <a href="https://arxiv.org/pdf/2104.00519.pdf">[1]</a>. We encourage everyone to try out more complex circuits in terms of the QFI determination. For instance, implementing the rotations before or between the entangling <code>cx</code> gates. It is also worth noting that the QFI may change as function of the parameter value, so we also encourage you to try out with different values of $\theta$ (it is now zero).' %}</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="QFI-computation">QFI computation<a class="anchor-link" href="#QFI-computation"> </a></h3><p>Given that the QFI matrix is symmetric, we only need to care about the computation of the upper or lower triangular parts. To keep the code simple and understandable, we will consider four shifts: one per term on the sum. This way, we will call our overlap function four times, every time obtaining the upper triangular values of the QFI that correspond to their respecitve elements in the sum.</p>
+<p>We will define our own function to obtain the QFI matrix that accepts an <code>overlap</code> callable, which can be any of the <code>fisherman.overlap</code> functions. These heavily simplify the code, allowing us to freely experiment and focus on the applications.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">qfi_parameter_shift</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">overlap</span><span class="p">):</span>
+    <span class="s2">&quot;Computes the quantum Fisher information matrix through parameter-shift rule.&quot;</span>
+    <span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_values</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_params</span><span class="p">)</span>
+    <span class="n">plus_shift</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">e_i</span> <span class="o">+</span> <span class="n">e_j</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e_j</span> <span class="ow">in</span> <span class="n">e</span><span class="p">[</span><span class="n">i</span><span class="p">:]])</span>
+    <span class="n">minus_shift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">e_i</span> <span class="o">-</span> <span class="n">e_j</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e_j</span> <span class="ow">in</span> <span class="n">e</span><span class="p">[</span><span class="n">i</span><span class="p">:]])</span>
+
+    <span class="n">dict_zero</span>        <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">param_values</span><span class="p">))</span>
+    <span class="n">dict_plus_plus</span>   <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="p">(</span><span class="n">param_values</span> <span class="o">+</span> <span class="n">plus_shift</span> <span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+    <span class="n">dict_plus_minus</span>  <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="p">(</span><span class="n">param_values</span> <span class="o">+</span> <span class="n">minus_shift</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+    <span class="n">dict_minus_minus</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="p">(</span><span class="n">param_values</span> <span class="o">-</span> <span class="n">minus_shift</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+    <span class="n">dict_minus_plus</span>  <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="p">(</span><span class="n">param_values</span> <span class="o">-</span> <span class="n">plus_shift</span> <span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+    <span class="n">dicts</span> <span class="o">=</span> <span class="p">[</span><span class="n">dict_plus_plus</span><span class="p">,</span> <span class="n">dict_plus_minus</span><span class="p">,</span> <span class="n">dict_minus_minus</span><span class="p">,</span> <span class="n">dict_minus_plus</span><span class="p">]</span>
+    <span class="n">factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    
+    <span class="n">state0</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">bind_parameters</span><span class="p">(</span><span class="n">dict_zero</span><span class="p">)</span>
+    <span class="n">terms</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">*</span><span class="n">overlap</span><span class="p">(</span><span class="n">state0</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">bind_parameters</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span> <span class="n">dicts</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">sym_from_triu</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">terms</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_params</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We first need to transform our circuit into a <code>StateFn</code></p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -118,8 +156,6 @@ nb_path: "nbs/05_examples.qfi.ipynb"
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">CircuitStateFn</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
-<span class="n">param_values</span> <span class="o">=</span> <span class="p">{</span><span class="n">theta0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">theta1</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">}</span>
-<span class="n">dtheta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -129,6 +165,13 @@ nb_path: "nbs/05_examples.qfi.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's see what we get!</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -136,57 +179,7 @@ nb_path: "nbs/05_examples.qfi.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_params</span><span class="p">,</span> <span class="n">n_dth</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">parameters</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">dtheta</span><span class="p">)</span>
-<span class="n">params</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">primitive</span><span class="o">.</span><span class="n">parameters</span>
-<span class="n">qfi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_params</span><span class="p">,</span> <span class="n">n_params</span><span class="p">))</span>
-<span class="n">idx0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">dtheta</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">sub_qfi</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">qfi</span><span class="p">):</span> <span class="k">return</span> <span class="n">qfi</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span>
-
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-        <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">*</span><span class="n">n_dth</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">param_values</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="n">param_dict</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">param_values</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">+</span> <span class="n">dth</span> <span class="k">for</span> <span class="n">dth</span> <span class="ow">in</span> <span class="n">dtheta</span><span class="p">]</span>
-        <span class="n">overlap</span> <span class="o">=</span> <span class="n">randomized_measurement_overlap</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span> <span class="n">n_rnd</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> 
-            <span class="n">overlap</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span>
-        <span class="n">super_fidelity</span> <span class="o">=</span> <span class="n">overlap</span><span class="p">[</span><span class="n">idx0</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">overlap</span><span class="p">[</span><span class="n">idx0</span><span class="p">,</span> <span class="n">idx0</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">overlap</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()))</span>
-        <span class="n">bures_distance</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">super_fidelity</span><span class="p">))</span>
-
-        <span class="n">est_qfi</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">sub_qfi</span><span class="p">,</span> <span class="n">dtheta</span><span class="p">,</span> <span class="n">bures_distance</span><span class="p">)</span>
-        <span class="n">qfi</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">est_qfi</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qfi</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qfi_parameter_shift</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">compute_uncompute_overlap</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -201,8 +194,9 @@ nb_path: "nbs/05_examples.qfi.ipynb"
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([[1.36533357, 0.        ],
-       [0.        , 0.18256721]])</pre>
+<pre>array([[1., 0., 0.],
+       [0., 1., 0.],
+       [0., 0., 1.]])</pre>
 </div>
 
 </div>
@@ -213,6 +207,758 @@ nb_path: "nbs/05_examples.qfi.ipynb"
 </div>
     {% endraw %}
 
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qfi_parameter_shift</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">swap_test_overlap</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 1.00097656, -0.02441406, -0.07324219],
+       [-0.02441406,  1.00390625,  0.05273438],
+       [-0.07324219,  0.05273438,  1.01660156]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qfi_parameter_shift</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">randomized_measurement_overlap</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 1.1200881 ,  0.05162481,  0.00822033],
+       [ 0.05162481,  1.09190233, -0.01296078],
+       [ 0.00822033, -0.01296078,  0.97356309]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We see very nice agreement betweeen all the methods. The compute-uncompute is the most accurate one as the QFI is, indeed, the identity in this case. This means that we can fully determine all the parameters from our measurements and that they are independent from each other.</p>
+<p>In case that we want to try a different backend or, simply, other options of the overlap functions, we can define a partial. For instance, we can increase the number of random unitary measurements performed in the last method to improve the performance and use global unitary operators instead of local ones.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rnd_overlap</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">randomized_measurement_overlap</span><span class="p">,</span> <span class="n">n_rnd</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">qfi_parameter_shift</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">rnd_overlap</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[1.03706235, 0.01959682, 0.00622802],
+       [0.01959682, 0.99992238, 0.02136687],
+       [0.00622802, 0.02136687, 0.99086517]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can use the <code>QFI</code> converter from qiskit to compare and validate our results.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.opflow.gradients</span> <span class="kn">import</span> <span class="n">QFI</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qfi_lin_comb</span> <span class="o">=</span> <span class="n">QFI</span><span class="p">()</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+<span class="n">qfi_lin_comb</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">param_values</span><span class="p">)))</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[1.+0.j, 0.+0.j, 0.+0.j],
+       [0.+0.j, 1.+0.j, 0.+0.j],
+       [0.+0.j, 0.+0.j, 1.+0.j]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, this converter works exclusively for pure states, while our <code>fisherman</code> functions support noisy backends that produce mixed states, as shown in detail in the device-independent certification example. We can try obtaining the QFI matrix from the same circuit run in a (simulated) quantum computer with depolarizing noise.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.test.mock</span> <span class="kn">import</span> <span class="n">FakeVigo</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">backend</span> <span class="o">=</span> <span class="n">QasmSimulator</span><span class="o">.</span><span class="n">from_backend</span><span class="p">(</span><span class="n">FakeVigo</span><span class="p">())</span>
+<span class="n">rnd_overlap</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">randomized_measurement_overlap</span><span class="p">,</span> <span class="n">n_rnd</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">qfi_parameter_shift</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">rnd_overlap</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.60855002, 0.01598284, 0.01513812],
+       [0.01598284, 0.67006369, 0.02558377],
+       [0.01513812, 0.02558377, 0.68090349]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Sub-QFI">Sub-QFI<a class="anchor-link" href="#Sub-QFI"> </a></h2><p>Following the same case of study, we now implement an entirely different approach to compute the QFI as introduced in <a href="https://arxiv.org/pdf/2104.00519.pdf">[1]</a>. The proposed method provides the so-called "sub-QFI" <a href="https://iopscience.iop.org/article/10.1088/2058-9565/abfbef/meta">[3]</a>, which is a lower bound to the QFI. As previously mentioned, the QFI quantifies the distance between states in parameter space, which allows us to determine how sensitive is a state $\rho_\theta$ to small perturbations $d\theta$ in its parameters. This is, indeed, related with the curvature of the fidelity $F\left(\rho_\theta,\rho_{\theta+d\theta}\right)$ as, the larger the curvature ($\propto dF/d\theta^2$), the higher the sensibility to changes in $\theta$ and, thus, the larger the QFI.</p>
+<p>Intuitively, the higher the distance between $\rho_\theta$ and $\rho_{\theta+d\theta}$ the more information can be extracted to determine the unknown parameter $\theta$ through measurements, which is the QFI. Actually, the QFI associated to the parameter $\theta$ can be expressed in terms of the second derivative of the previous fidelity</p>
+<p>{% raw %}
+$$\mathcal{F}_\theta(\rho_\theta) = 8\lim_{d\theta\to 0}\frac{1-F(\rho_\theta,\rho_{\theta+d\theta})}{d\theta^2}.$$
+{% endraw %}</p>
+<p>Nevertheless, the fidelity is very costly to obtain so we approximate it by the super-fidelity $G$, whose square root provides an upper bound, and can be entirely computed in terms of state overlaps of the form $\text{Tr}\left[\rho_0\rho_1\right]$. The sub QFI is then</p>
+<p>{% raw %}
+$$\mathcal{f}_\theta(\rho_\theta) \simeq 8\frac{1 - \sqrt{G(\rho_\theta, \rho_{\theta+d\theta})}}{d\theta^2},$$
+{% endraw %}
+{% raw %}
+$$G(\rho_0,\rho_1)=\text{Tr}\left[\rho_0\rho_1\right] + \sqrt{\left(1-\text{Tr}\left[\rho_0^2\right]\right)\left(1-\text{Tr}\left[\rho_1^2\right]\right)}.$$
+{% endraw %}</p>
+<p>Notice that, for pure states, the super-fidelity becomes the fidelity and, therefore, we obtain the actual QFI.</p>
+<p>Hence, the methodology introduced in <a href="https://arxiv.org/pdf/2104.00519.pdf">[1]</a> consists on approximating the Bures distance $\mathcal{D}(\theta)=8\left(1 - \sqrt{G(\rho_\theta, \rho_{\theta+d\theta})}\right)$ by its second order Taylor expansion around $\theta$, such that $\mathcal{D}(\theta)\simeq\mathcal{f}_\theta(\rho_\theta)d\theta^2$. This way, we infer the sub-QFI $\mathcal{f}_\theta(\rho_\theta)$ by performing a quadratic fit to the Bures distance around $\theta$.</p>
+<p>Let us apply this method to the circuit at hand. The main drawback of this method is that it has been developed for states characterized by a single parameter. Therefore, the Taylor expansion, as derived, is not suitable to compute crossed second derivative terms such as $\partial_i\partial_j\mathcal{D}(\theta)$ with $i\neq j$. However, we can use the approach to compute the diagonal terms of the QFI matrix involving $\partial_i^2\mathcal{D}(\theta)$, wich suffices for our current example.</p>
+<p>Like before, let us define a function that will ease the experimentation.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">bures</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span> <span class="k">return</span> <span class="n">f</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="k">def</span> <span class="nf">sub_qfi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">d_theta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_distances</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="s2">&quot;Computes the sub quantum Fisher information matrix from the super-fidelity.&quot;</span>
+    <span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_values</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_params</span><span class="p">)</span>
+    <span class="n">d_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">d_theta</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">d_theta</span>
+    <span class="n">idx0</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">d_theta</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+    <span class="n">sub_qfi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_params</span><span class="p">,</span> <span class="n">n_params</span><span class="p">))</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_params</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d_theta</span><span class="p">)))</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">param_values</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">e_i</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">@</span> <span class="n">d_theta</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span> <span class="c1"># Shift i-th parameter</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+        <span class="n">overlaps</span> <span class="o">=</span> <span class="n">overlap</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">overlaps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="n">overlaps</span> <span class="o">=</span> <span class="n">overlaps</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">overlaps</span><span class="p">)</span> <span class="c1"># numerical stability</span>
+        <span class="n">super_fidelity</span> <span class="o">=</span> <span class="n">overlaps</span><span class="p">[</span><span class="n">idx0</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">overlaps</span><span class="p">[</span><span class="n">idx0</span><span class="p">,</span> <span class="n">idx0</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">overlaps</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()))</span>
+        <span class="n">bures_distance</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">super_fidelity</span><span class="p">))</span>
+        <span class="n">est_qfi</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">bures</span><span class="p">,</span> <span class="n">d_theta</span><span class="p">,</span> <span class="n">bures_distance</span><span class="p">)</span>
+        <span class="n">sub_qfi</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">est_qfi</span>
+        <span class="n">dists</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bures_distance</span>
+        
+    <span class="k">if</span> <span class="n">return_distances</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sub_qfi</span><span class="p">,</span> <span class="n">dists</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sub_qfi</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's see what we get!</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sub_qfi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">compute_uncompute_overlap</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.99712572, 0.        , 0.        ],
+       [0.        , 0.99712572, 0.        ],
+       [0.        , 0.        , 0.99712572]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sub_qfi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">swap_test_overlap</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[1.01684152, 0.        , 0.        ],
+       [0.        , 0.9905152 , 0.        ],
+       [0.        , 0.        , 0.9490148 ]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rnd_overlap</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">randomized_measurement_overlap</span><span class="p">,</span> <span class="n">n_rnd</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">sub_qfi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">rnd_overlap</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[1.02512271, 0.        , 0.        ],
+       [0.        , 1.12901337, 0.        ],
+       [0.        , 0.        , 0.9984681 ]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since this method only computes the diagonal elements, it may seem that we are obtaining better results than with the parameter shift-rule, but it is only because the actual QFI is the identity. In contrast, if the QFI matrix had off-diagonal terms, this method would entirely fail to estimate them, as it requires further theoretical development.</p>
+<p>Besides, we are currently dealing with pure states. Let's see what happens with a bit of noise!</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">backend</span> <span class="o">=</span> <span class="n">QasmSimulator</span><span class="o">.</span><span class="n">from_backend</span><span class="p">(</span><span class="n">FakeVigo</span><span class="p">())</span>
+<span class="n">rnd_overlap</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">randomized_measurement_overlap</span><span class="p">,</span> <span class="n">n_rnd</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">sub_qfi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">rnd_overlap</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.83480498, 0.        , 0.        ],
+       [0.        , 0.88432182, 0.        ],
+       [0.        , 0.        , 0.89936983]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We see that this approach, even though it provides a lower bound to the QFI, actually returns a larger estimation of the QFI than the parameter shift-rule in the same noisy backend. This may be due to the fact that the parameter shift-rule is built assuming that the states are pure.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Local-curvature">Local curvature<a class="anchor-link" href="#Local-curvature"> </a></h3><p>A very interesting feature of this method is that it revolves around the relationship between the QFI and the local curvature of a given function. This is a key concept that is exploited in some optimization methods such as the quantum natural gradient <a href="https://quantum-journal.org/papers/q-2020-05-25-269/">[4]</a>.</p>
+<p>Let's set <code>return_distances=True</code> and estimate the QFI information matrix of a different circuit.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_qubits</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">ParameterVector</span><span class="p">(</span><span class="s1">&#39;θ&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">rz</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">CircuitStateFn</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
+
+<span class="n">qc</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;mpl&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea output_execute_result">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the previous one, we had that the curvature around all the parameters was the same, provided that they all had the same QFI value and the matrix was diagonal. Furhtermore, it was entirely independent of the parameter value (you would know if you had tested it :P). In this circuit, however, the curvature in each direction is different and, even more, it depends on the actual value of the parameters.</p>
+<p>Let's start by initializing the parameters to zero.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">param_values_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">qfi</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">sub_qfi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values_0</span><span class="p">,</span> <span class="n">compute_uncompute_overlap</span><span class="p">,</span> <span class="n">return_distances</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">qfi</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 0.997,  0.   ,  0.   ],
+       [ 0.   , -0.   ,  0.   ],
+       [ 0.   ,  0.   ,  0.997]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">d_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dist</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">distances</span><span class="p">):</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d_theta</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">fr</span><span class="s1">&#39;$\theta_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$d\theta$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Bures distance $\mathcal</span><span class="si">{D}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In contrast to what we observed in the first circuit, there is a parameter with null QFI. This means that we cannot extract any kind of information about it with the current configuration or, in other words, variations in the parameter have no effect on the state. Notice that the curvature of the Bures distance with respect to $\theta_1$ is very flat, suggesting that we either must perform large changes in the parameter to observe an effect in the state, or that we will never observe any effect on the state by just changing such parameter. Let's see what happens.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">param_values_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span> <span class="c1"># Change θ_1</span>
+<span class="n">qfi</span> <span class="o">=</span> <span class="n">sub_qfi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values_1</span><span class="p">,</span> <span class="n">compute_uncompute_overlap</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">qfi</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.997, 0.   , 0.   ],
+       [0.   , 0.   , 0.   ],
+       [0.   , 0.   , 0.997]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Indeed we do not observe any kind of change by exclusively shifting $\theta_1$. This process is analogous to a common phenomenon in optimization processes with overparameterized anstaze in which many parameters end up in a flat region of the target function.</p>
+<p>In contrast, a slight change in either $\theta_0$ or $\theta_2$ may incur large changes in the value of the function.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">param_values_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+<span class="n">qfi</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">sub_qfi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values_2</span><span class="p">,</span> <span class="n">compute_uncompute_overlap</span><span class="p">,</span> <span class="n">return_distances</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">qfi</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.997, 0.   , 0.   ],
+       [0.   , 0.228, 0.   ],
+       [0.   , 0.   , 0.997]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dist</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">distances</span><span class="p">):</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d_theta</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">fr</span><span class="s1">&#39;$\theta_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$d\theta$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Bures distance $\mathcal</span><span class="si">{D}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Changing the value of the other parameters, we encounter a region in which the landscape around $\theta_1$ is no longer flat. Actually, while $\theta_0$ and $\theta_2$ may both have a large impact in the state, it is only $\theta_0$ that is capable of pushing $\theta_1$ outside of the flat region to where we can start obtaining information about it through measurements. This is because after applying the Hadamard gate to our first qubit, we obtain the $|+\rangle=\left(|0\rangle + |1\rangle\right)/\sqrt{2}$ state, which is an eigenvalue of $x$. Hence, unless we first apply a rotation around $z$ ($\theta_0\neq 0$), we won't be able to change the state by applying rotations around $x$ ($\theta_1$) as they only provide a global phase.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="References">References<a class="anchor-link" href="#References"> </a></h2><p>[1] M. Yu <em>et al</em>. <a href="https://arxiv.org/abs/2104.00519"> Experimental estimation of the quantum Fisher information from randomized measurements<a/>. arXiv:2104.0519 (2021).</p>
+<p>[2] J. J. Meyer, <a href="https://arxiv.org/abs/2103.15191">Fisher Information in Noisy Intermediate-Scale Quantum Applications <a/>. arXiv:2103.15191 (2021)</p>
+<p>[3] M. Cerezo <em>et al</em>., <a href="https://iopscience.iop.org/article/10.1088/2058-9565/abfbef/meta"> Sub-quantum Fisher information<a/> <em>QST</em> (2021)</p>
+<p>[4] J. Stokes <em>et al</em>., <a href="https://quantum-journal.org/papers/q-2020-05-25-269/"> Quantum natural gradient <a/>. <em>Quantum</em> 4, 269 (2020).</p>
+
+</div>
+</div>
+</div>
 </div>
  
 
