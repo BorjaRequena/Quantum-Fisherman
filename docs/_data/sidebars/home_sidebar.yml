@@ -13,6 +13,15 @@ entries:
       - output: web
         subfolderitems:
         - output: web,pdf
+          title: Device-independent certification
+          url: examples.di_certification.html
+        - output: web,pdf
+          title: Quantum Fisher information
+          url: examples.qfi.html
+        title: Examples
+      - output: web
+        subfolderitems:
+        - output: web,pdf
           title: Randomized measurements
           url: overlap.randomized.html
         - output: web,pdf
@@ -25,12 +34,6 @@ entries:
     - output: web,pdf
       title: Utils
       url: utils.html
-    - output: web,pdf
-      title: Device-independent certification
-      url: examples.di_certification.html
-    - output: web,pdf
-      title: Quantum Fisher information
-      url: examples.qfi.html
     output: web
     title: fisherman
   output: web
