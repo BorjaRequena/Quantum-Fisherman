@@ -1,4 +1,4 @@
-repository: BorjaRequena/Quantum-Fisherman
+repository: BorjaRequena/fisherman
 output: web
 topnav_title: fisherman
 site_title: fisherman
@@ -58,7 +58,9 @@ defaults:
 
 sidebars:
 - home_sidebar
-permalink: pretty
 
-theme: jekyll-theme-cayman
+plugins:
+    - jekyll-remote-theme
+    
+remote_theme: fastai/nbdev-jekyll-theme
 baseurl: /Quantum-Fisherman/
