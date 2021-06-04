@@ -21,7 +21,7 @@ def random_unitary_circuits(
     n_rnd: int,
     n_qubits: int,
     d: Optional[int] = 2,
-    local: Optional[bool] = True
+    local: bool = True
 ) -> ListOp:
     "Samples `n_rnd` unitary random circuits with acting on `n_qubits`."
     def _random_circuit(n_qubits):
@@ -37,7 +37,7 @@ def randomized_measurement_overlap(
     state1: Optional[Union[StateFn, ListOp]] = None,
     param_dict: Optional[Dict[ParameterExpression, List[float]]] = None,
     n_rnd: Optional[int] = None,
-    local: Optional[bool] = True,
+    local: bool = True,
     expectation: Optional[ExpectationBase] = None,
     backend: Optional[Union[Backend, QuantumInstance]] = None
 ) -> np.ndarray:
@@ -74,7 +74,9 @@ def randomized_measurement_overlap(
 
     return overlap[0, 1:].squeeze() if state1 is not None else overlap.squeeze()
 
-def _overlap_from_global(observable):
+def _overlap_from_global(
+    observable: StateFn
+) -> np.ndarray:
     "Overlap computation from measurements obtained through global random unitaries."
     rnd_meas = np.abs(observable.eval())**2
     p = rnd_meas.mean(0)
@@ -91,7 +93,10 @@ def _overlap_from_global(observable):
     product_expectation = (rnd_meas.T @ rnd_meas)/rnd_meas.shape[0]
     return _prefactor(rnd_meas)*product_expectation - 1
 
-def _overlap_from_local(observable, transp_sv=True):
+def _overlap_from_local(
+    observable: StateFn,
+    transp_sv: bool = True
+) -> np.ndarray:
     "Overlap computation from measurements obtained through local random unitaries."
     statevectors = _statevector_to_matrix(observable.eval())
     if transp_sv:
