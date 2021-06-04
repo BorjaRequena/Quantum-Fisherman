@@ -271,6 +271,7 @@ where the sum goes over all pairs of states $s,s'$ in the computational basis, $
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Overlap estimators, such as <a href="/Quantum-Fisherman/overlap.randomized.html#randomized_measurement_overlap"><code>randomized_measurement_overlap</code></a>, are mainly intended to work with <code>StateFn</code> and <code>ListOp</code> objects. However, we provide compatibility with <code>state0</code> in <code>QuantumCircuit</code> with the idea to cover quick purity estimations straight from the circuits.</p>
+<p>The bread-and-butter calls and applications of these methods are all detailed in the <a href="https://borjarequena.github.io/Quantum-Fisherman/#Basic-usage">basic usage</a>.</p>
 <p>In order to illustrate its behaviour, we first need to create a parameterized quantum circuit.</p>
 
 </div>
@@ -316,6 +317,13 @@ where the sum goes over all pairs of states $s,s'$ in the computational basis, $
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As previously mentioned, these overlap computers operate with <code>StateFn</code> so we will call <code>CircuitStateFn</code> on the circuit to create our state. If a <code>Backend</code> or <code>QuantumInstance</code> is not provided, everything is computed analytically with operator flow. Otherwise, the resulting observables are internally converted with a <code>CircuitSampler</code> built from the backend. Providing an <code>Expectation</code> converts the observable prior to the <code>CircuitSampler</code>.</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -338,7 +346,7 @@ where the sum goes over all pairs of states $s,s'$ in the computational basis, $
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If a <code>Backend</code> or <code>QuantumInstance</code> is not provided, everything is computed analytically with operator flow. Otherwise, the resulting observables are internally converted with a <code>CircuitSampler</code> built from the backend. Providing an <code>Expectation</code> converts the observable prior to the <code>CircuitSampler</code>.</p>
+<p>Now we can, for instance, compare the effect of using local or global unitaries. Let's first define a set of parameters to evaluate the overlap across their respective states.</p>
 
 </div>
 </div>
@@ -435,6 +443,13 @@ where the sum goes over all pairs of states $s,s'$ in the computational basis, $
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In terms of the result, we do not appreciate any substantial difference between both approaches. The execution performance, however, depends strongly on the backends, as previously discussed.</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">

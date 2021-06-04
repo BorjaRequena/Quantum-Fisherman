@@ -159,19 +159,20 @@ Finally, we have the `device_independent_overlap` method, which computes the ove
 The most straightforward functionality is the evaluation of two states each running on a backend. 
 
 ```
-from qiskit.providers.aer import QasmSimulator, StatevectorSimulator
+from qiskit.providers.aer import QasmSimulator
+from qiskit.test.mock import FakeVigo
 ```
 
 ```
-backends = [QasmSimulator(), StatevectorSimulator()]
+backends = [QasmSimulator(), QasmSimulator.from_backend(FakeVigo())]
 device_independent_overlap(state_0, backends, state1=state_1)
 ```
 
 
 
 
-    array([[1.02066603, 0.69954885],
-           [0.69954885, 0.90616036]])
+    array([[1.014965  , 0.69961107],
+           [0.69961107, 0.83070439]])
 
 
 
