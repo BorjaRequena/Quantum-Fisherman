@@ -412,8 +412,9 @@ $$\mathcal{F}_{i j}=-\frac{1}{2} \left(\left|\left\langle\psi(\boldsymbol{\theta
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># rnd_overlap = partial(randomized_measurement_overlap, n_rnd=300, backend=backend)</span>
-<span class="c1"># qfi_parameter_shift(state, param_values, rnd_overlap)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">backend</span> <span class="o">=</span> <span class="n">QasmSimulator</span><span class="o">.</span><span class="n">from_backend</span><span class="p">(</span><span class="n">FakeVigo</span><span class="p">())</span>
+<span class="n">rnd_overlap</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">randomized_measurement_overlap</span><span class="p">,</span> <span class="n">n_rnd</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">qfi_parameter_shift</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">rnd_overlap</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -634,8 +635,9 @@ $$G(\rho_0,\rho_1)=\text{Tr}\left[\rho_0\rho_1\right] + \sqrt{\left(1-\text{Tr}\
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># rnd_overlap = partial(randomized_measurement_overlap, n_rnd=300, backend=backend)</span>
-<span class="c1"># sub_qfi(state, param_values, rnd_overlap)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">backend</span> <span class="o">=</span> <span class="n">QasmSimulator</span><span class="o">.</span><span class="n">from_backend</span><span class="p">(</span><span class="n">FakeVigo</span><span class="p">())</span>
+<span class="n">rnd_overlap</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">randomized_measurement_overlap</span><span class="p">,</span> <span class="n">n_rnd</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">sub_qfi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_values</span><span class="p">,</span> <span class="n">rnd_overlap</span><span class="p">)</span>
 </pre></div>
 
     </div>

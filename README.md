@@ -79,11 +79,6 @@ print(f"Overlap with swap test:           {swap_overlap:.3f}")
 print(f"Overlap with random_measurements: {rnd_overlap:.3f}")
 ```
 
-    Overlap with comp-uncomp:         0.770
-    Overlap with swap test:           0.764
-    Overlap with random_measurements: 0.789
-
-
 All the three methods, while executing different algorithms, share the same functionalities. Thus, the main functionalities, while showcased with a single method at once, are applicable to all of them.
 
 The most basic functionality is the calculation of the purity of a single state. This is achieved by providing a single input state and no additional state or value to the parameters. 
@@ -158,5 +153,7 @@ overlaps.diagonal()
     array([1.00417878, 1.03164371, 1.03249533])
 
 
+
+Finally, we have the `device_independent_overlap` method, which computes the overlap between quantum states across devices. The behaviour si similar to that of the previous methods but with backends. 
 
 For further details about the underlying mechanisms of each method and their arguments, refer to the docs :) 
